@@ -1,0 +1,165 @@
+/*变量*/
+/*基本颜色*/
+/*基本工具*/
+/*混合Mixin*/
+#rankPage {
+  white-space: nowrap;
+  padding: 16px 30px 0 20px;
+}
+#rankPage .l {
+  display: inline-block;
+  vertical-align: top;
+  width: 17rem;
+  box-sizing: border-box;
+  padding-right: 20px;
+  border-right: #eee solid 1px;
+}
+#rankPage .r {
+  display: inline-block;
+  vertical-align: top;
+  width: 44.6rem;
+  height: 48.4rem;
+  padding-left: 26px;
+  padding-right: 36px;
+  box-sizing: border-box;
+  position: relative;
+}
+#rankPage.loadingSongs .r {
+  pointer-events: none;
+  opacity: 0.8;
+}
+#rankPage.loadingSongs #songList {
+  opacity: 0;
+}
+#rankPage .rank_nav {
+  width: 15rem;
+}
+#rankPage .rank_nav li {
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+  background-position-y: center;
+  background-position-x: 6px;
+  padding-left: 30px;
+  line-height: 30px;
+  height: 30px;
+  position: relative;
+}
+#rankPage .rank_nav li.active,
+#rankPage .rank_nav li:hover {
+  font-weight: 600;
+  background-color: #22bb87 !important;
+  color: #fff !important;
+}
+#rankPage .rank_nav li img {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  height: 18px;
+  width: 18px;
+}
+#rankPage .rank_nav:not(:last-child)::after {
+  content: '';
+  display: block;
+  margin: 5px 0;
+  height: 1px;
+  width: 100%;
+  background: #eee;
+}
+#rankPage #rankDateWrap {
+  line-height: 26px;
+  position: absolute;
+  right: 11px;
+  top: 2px;
+}
+#rankPage #rankTitle {
+  cursor: default;
+  display: inline-block;
+  padding-left: 7px;
+  border-left: 4px solid #22bb87;
+  font-size: 15px;
+  line-height: 15px;
+  height: 15px;
+  color: #666;
+  font-weight: 500;
+}
+#rankPage .top {
+  position: relative;
+  line-height: 33px;
+}
+#rankPage #rankTips {
+  position: absolute;
+  right: -10px;
+  top: 5px;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #666;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 14px;
+  cursor: pointer;
+}
+#rankPage #rankTips::after {
+  content: '!';
+  color: #666;
+}
+#rankPage #rankTips:hover .content.active {
+  display: block;
+}
+#rankPage #rankTips .content {
+  display: none;
+  position: absolute;
+  right: -1px;
+  top: 20px;
+  border: 1px solid #666;
+  width: 160px;
+  white-space: normal;
+  text-align: left;
+  border-radius: 3px;
+  padding: 5px;
+  z-index: 999;
+  background: #fff;
+  box-shadow: 0 0 5px lightgray;
+}
+#rankPage .allCtrl {
+  line-height: 38px;
+}
+#rankPage #songList {
+  transition: opacity 0.2s ease;
+}
+#rankPage #songList li {
+  color: #666;
+  cursor: pointer;
+  line-height: 38px;
+  height: 38px;
+  font-size: 13px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 38.7rem;
+  padding-right: 9rem;
+  box-sizing: border-box;
+}
+#rankPage #songList li span:hover {
+  color: #28bb89;
+}
+#rankPage #songList li:hover {
+  background: #f8f8f8;
+}
+#rankPage #songList .num {
+  margin-right: 8px;
+}
+#rankPage #songList .fr {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#rankPage .disableContent #songList {
+  opacity: 0;
+}
+#rankPage #pageNavigator {
+  -webkit-user-select: none;
+  width: 39rem;
+}

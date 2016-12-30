@@ -1,0 +1,139 @@
+/*变量*/
+/*基本颜色*/
+/*基本工具*/
+/*混合Mixin*/
+#classifyPage {
+  white-space: nowrap;
+  padding: 16px 30px 0 22px;
+}
+#classifyPage .l {
+  display: inline-block;
+  vertical-align: top;
+  width: 15rem;
+  box-sizing: border-box;
+  padding-right: 18px;
+  border-right: #eee solid 1px;
+}
+#classifyPage .r {
+  display: inline-block;
+  padding-right: 31px;
+  vertical-align: top;
+  width: 41.5rem;
+  padding-left: 18px;
+}
+#classifyPage .sng1 {
+  height: 492px;
+  width: 13rem;
+}
+#classifyPage .sng1 h2 {
+  font-size: 1.4rem;
+  padding-left: 10px;
+  color: #20bd88;
+  line-height: 30px;
+  height: 30px;
+}
+#classifyPage .sng1 ul {
+  white-space: initial;
+  padding: 5px 0;
+}
+#classifyPage .sng1 ul li {
+  cursor: pointer;
+  padding-left: 10px;
+  line-height: 26px;
+  height: 26px;
+  width: 48%;
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+#classifyPage .sng1 ul li.active,
+#classifyPage .sng1 ul li:hover {
+  background: #fff!important;
+  color: #20bd88!important;
+}
+#classifyPage .sng1 .line {
+  margin: 5px 0;
+  height: 1px;
+  background: #eee;
+}
+#classifyPage .headLine {
+  white-space: nowrap;
+  padding-bottom: 15px;
+}
+#classifyPage .headLine > * {
+  display: inline-block;
+  vertical-align: -webkit-baseline-middle;
+}
+#classifyPage .list_sort_style {
+  float: right;
+}
+#classifyPage .list_sort_style p {
+  line-height: 24px;
+  font-size: 14px;
+  padding-right: 5px;
+  color: #989898;
+  display: inline;
+  vertical-align: middle;
+}
+#classifyPage .sortType {
+  display: inline-block;
+  vertical-align: middle;
+}
+#classifyPage .sortType span {
+  border: 1px solid #999;
+  color: #999;
+  line-height: 24px;
+  font-size: 14px;
+  height: 24px;
+  width: 4rem;
+  text-align: center;
+  display: inline-block;
+  margin-right: -1px;
+  cursor: pointer;
+}
+#classifyPage .sortType span.active {
+  background: #23bc88 !important;
+  color: #fff!important;
+}
+#classifyPage .sortType span:hover {
+  background: #fff;
+  color: #23bc88;
+}
+#classifyPage .sortType span:hover,
+#classifyPage .sortType span.active {
+  border-color: #23bc88;
+}
+#classifyPage .disableContent #songList {
+  opacity: 0;
+}
+#classifyPage #songList {
+  transition: opacity 0.2s ease;
+}
+#classifyPage #songList li {
+  width: 32.2rem;
+  line-height: 35px;
+  padding-right: 96px;
+  position: relative;
+  color: #666;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+#classifyPage #songList li span:hover,
+#classifyPage #songList li p:hover {
+  color: #28bb89;
+}
+#classifyPage #songList li:hover {
+  background: #f8f8f8;
+}
+#classifyPage #songList .fr {
+  position: absolute;
+  right: 0;
+  top: 0;
+}

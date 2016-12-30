@@ -1,0 +1,186 @@
+/*变量*/
+/*基本颜色*/
+@bgGreen : #23bc88;
+@fontGreen: #20bc87;
+@white : #fff;
+@active : #23bc88;
+@fontColor : #3;
+@lineGray : #eee;
+@borderGray: #999;
+
+/*基本工具*/
+/*混合Mixin*/
+.nowrap () {white-space: nowrap;};
+.dib(){display: inline-block;};
+.borderGray(){border: 1px @borderGray solid;};
+.lineGray(){border-color: @lineGray;};
+.hoverActive(@ft, @bg) {
+	cursor: pointer;
+	&.active, &:hover{
+		font-weight: 600;
+		background:@bg!important;
+		color: @ft!important;
+	};
+	&:hover{opacity: 0.6}
+};
+
+#collectionPage{
+	.nowrap;
+	padding: 16px 30px 16px 22px;
+	.l{
+		.dib;
+		vertical-align: top;
+		width: 15rem;
+		box-sizing: border-box;
+		padding-right:18px;
+		border-right: @lineGray solid 1px;
+	};
+	.r{
+		.dib;
+		padding-right: 29px;
+		vertical-align: top;
+		width: 41.5rem;
+		padding-left: 20px;
+	};
+	.sng1 {
+		width: 138px;
+		h2{
+			font-size: 1.4rem;
+			padding-left: 10px;
+			color: #20bd88;
+			line-height:30px;
+			height:30px;
+		}
+		ul{
+			white-space: initial;
+			padding: 5px 0;
+			li{
+				cursor: pointer;
+				&.active, &:hover{
+					background: @white;
+					color: @fontGreen;
+				};
+				padding-left: 10px;
+				line-height: 26px;
+				height: 26px;
+				width: 48%;
+				box-sizing: border-box;
+				display: inline-block;
+				font-size: 12px;
+				color: #666;
+				white-space: nowrap;
+				cursor: pointer;
+			}
+		}
+		.line{
+			margin:5px 0;
+			height:1px;
+			background: @lineGray;
+		}
+	}
+	.headLine{
+		white-space:nowrap;
+		padding-bottom:15px;
+		>*{
+			display: inline-block;
+			vertical-align: -webkit-baseline-middle;
+		}
+	}
+	.list_sort_style{
+		float: right;
+		padding-bottom:12px;
+		p{
+			line-height: 24px;
+			font-size: 12px;
+			color: #989898;
+			display: inline;
+			margin-right: 6px;
+		}
+	}
+	.sortType {
+		display: inline-block;
+		vertical-align: middle;
+		span{
+			border:1px solid @borderGray;
+			color: @borderGray;
+			line-height: 24px;
+			font-size: 12px;
+			height:24px;
+			width:4rem;
+			text-align: center;
+			display: inline-block;
+			margin-right: -1px;
+			cursor: pointer;
+			&.active{
+				background: @bgGreen!important;
+				color: @white!important;
+			};
+			&:hover{
+				background: @white;
+				color: @fontGreen;
+			};
+			&:hover, &.active{border-color: @bgGreen;}
+		}
+	}
+	#collection{
+		display: flex;
+		transition: opacity 0.2s ease;
+		justify-content: flex-start;
+		width: 100%;
+		flex-wrap: wrap;
+		li {
+			position: relative;
+			width: 13rem;
+			padding-bottom: 10px;
+			cursor: pointer;
+			margin-right: 9px;
+			&:nth-child(3n+0) {margin-right: 0;}
+		}
+		.collectionDesc{
+			position: absolute;
+			width: 100%;
+			font-size: 11px;
+			line-height: 22px;
+			text-align: right;
+			padding: 0 5px;
+			box-sizing: border-box;
+			background: rgba(0, 0, 0, 0.3);
+			color: #fff;
+			&::before{
+				content: '';
+				display: inline-block;
+				width: 14px;
+				background-image: url(../../images/listen.png);
+				background-size: 14px auto;
+				background-repeat: no-repeat;
+				background-position-y: 0px;
+				background-position-x: 0px;
+				background-clip: content-box;
+				background-origin: content-box;
+				height: 14px;
+				padding: 0 4px;
+				vertical-align: sub;
+			}
+		}
+		// 按时间排序的话, 不显示icon
+		&.isHotList .collectionDesc::before{display:none}
+		img{
+			width:13rem;
+			height:13rem;;
+		}
+		.name{
+			display: block;
+			line-height: 32px;
+			height: 32px;
+			font-size: 12px;
+			color: #666;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+			&:hover{
+				color: @bgGreen;
+			}
+		}
+
+	}
+}

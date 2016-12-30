@@ -1,0 +1,58 @@
+#SearchInput input[type=text] {
+  border: 1px #ccc solid;
+  width: 12rem;
+  line-height: 30px;
+  height: 3rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  font-family: "Microsoft YaHei", Arial, Verdana;
+  font-size: 14px;
+  color: #cdcdcd;
+}
+#SearchInput input[type=text]:focus {
+  color: #000;
+}
+#SearchInput input[type=text]:focus + #poplist {
+  display: block;
+}
+#SearchInput {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 12px;
+}
+#SearchInput:hover #poplist {
+  display: block;
+}
+#SearchInput.canSearch #searchBtn {
+  pointer-events: inherit;
+}
+#SearchInput.canSearch #searchBtn i {
+  background-position-y: -14px !important;
+}
+#searchBtn {
+  pointer-events: none;
+  opacity: 1;
+  position: absolute;
+  right: 0;
+  top: 4px;
+}
+#poplist {
+  display: none;
+  position: absolute;
+  top: 30px;
+  background-color: white;
+  line-height: 20px;
+  padding: 7px 0 ;
+  width: 12rem;
+  box-sizing: border-box;
+  border: 1px solid #999;
+  z-index: 99;
+}
+#poplist li {
+  padding: 0 7px ;
+  cursor: pointer;
+}
+#poplist li.active,
+#poplist li:hover {
+  color: #20bc87;
+}

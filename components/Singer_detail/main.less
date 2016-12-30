@@ -1,0 +1,145 @@
+/*变量*/
+/*基本颜色*/
+@bgGreen : #23bc88;
+@fontGreen: #20bc87;
+@white : #fff;
+@active : #23bc88;
+@fontColor : #3;
+@lineGray : #eee;
+@borderGray: #999;
+@fontGray: #666;
+
+/*基本工具*/
+/*混合Mixin*/
+.nowrap () {white-space: nowrap;};
+.dib(){display: inline-block;};
+.borderGray(){border: 1px @borderGray solid;};
+.lineGray(){border-color: @lineGray;};
+.hoverActive(@ft, @bg) {
+	cursor: pointer;
+	&.active, &:hover{
+		font-weight: 600;
+		background:@bg!important;
+		color: @ft!important;
+	};
+	&:hover{opacity: 0.6}
+};
+
+#singerDetailPage{
+	padding: 0 30px 16px 20px;
+	.nowrap;
+	.mbx{
+		line-height: 50px;
+		color: @borderGray;
+		span{
+			color: @fontGray;
+		}
+	};
+	.top{
+		padding-bottom: 4px;
+		img{
+			width: 10rem;
+			height: 10rem;
+			.dib;
+			vertical-align: top;
+		}
+		.intro{
+			width:46.8rem;
+			vertical-align: top;
+			position: relative;
+			.dib;
+			color: @fontGray;
+			padding-left: 20px;
+			padding-bottom: 6px;
+			.singerName{
+				font-size: 16px;
+				line-height: 42px;
+				height:42px;
+				display: block;
+			}
+			.brief{
+				font-size: 14px;
+				line-height: 26px;
+				white-space: initial;
+			}
+			&:hover .floatTxt{
+				display: block;
+			}
+		}
+	}
+	#singerDetail{
+		width: 300px;
+		max-height: 120px;
+		overflow-x: hidden;
+		overflow-y: scroll;
+		background-color: white;
+		display: inline-block;
+		white-space: normal;
+		padding: 10px;
+		&::-webkit-scrollbar-thumb {
+			width: 4px;
+			background: gray;
+		}
+		&::-webkit-scrollbar {
+			width: 4px;
+			background: lightgrey;
+		}
+	}
+	.floatTxt{
+		position: absolute;
+		display: none;
+		z-index: 99;
+		right: 0;
+		top: 93px;
+		border: 1px solid black;
+		box-shadow: 0 0 10px gray;
+		&::after{
+			content: '';
+			display: block;
+			border: 1px solid black;
+			position: absolute;
+			right: 25px;
+			top: -6px;
+			height: 10px;
+			width: 10px;
+			background: white;
+			border-bottom: none;
+			border-left: none;
+			transform: rotate(-45deg);
+		}
+	}
+	.allCtrl{
+		padding: 16px 0;
+	}
+	#song_container {
+		li{
+			color: @fontGray;
+			cursor: pointer;
+			line-height: 34px;
+			height:34px;
+			position: relative;
+			border-bottom: 1px solid @lineGray;
+			.text{
+				width: 80%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: inline-block;
+				vertical-align: bottom;
+			}
+			span:hover{
+				color: #28bb89;
+			}
+			&:hover{
+				background: #f8f8f8;
+			}
+		}
+		.num{
+			margin-right: 8px;
+		}
+		.fr{
+			float: right;
+		}
+	}
+
+
+}

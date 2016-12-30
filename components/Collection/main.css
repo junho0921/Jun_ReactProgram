@@ -1,0 +1,169 @@
+/*变量*/
+/*基本颜色*/
+/*基本工具*/
+/*混合Mixin*/
+#collectionPage {
+  white-space: nowrap;
+  padding: 16px 30px 16px 22px;
+}
+#collectionPage .l {
+  display: inline-block;
+  vertical-align: top;
+  width: 15rem;
+  box-sizing: border-box;
+  padding-right: 18px;
+  border-right: #eee solid 1px;
+}
+#collectionPage .r {
+  display: inline-block;
+  padding-right: 29px;
+  vertical-align: top;
+  width: 41.5rem;
+  padding-left: 20px;
+}
+#collectionPage .sng1 {
+  width: 138px;
+}
+#collectionPage .sng1 h2 {
+  font-size: 1.4rem;
+  padding-left: 10px;
+  color: #20bd88;
+  line-height: 30px;
+  height: 30px;
+}
+#collectionPage .sng1 ul {
+  white-space: initial;
+  padding: 5px 0;
+}
+#collectionPage .sng1 ul li {
+  padding-left: 10px;
+  line-height: 26px;
+  height: 26px;
+  width: 48%;
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#collectionPage .sng1 ul li.active,
+#collectionPage .sng1 ul li:hover {
+  background: #fff;
+  color: #20bc87;
+}
+#collectionPage .sng1 .line {
+  margin: 5px 0;
+  height: 1px;
+  background: #eee;
+}
+#collectionPage .headLine {
+  white-space: nowrap;
+  padding-bottom: 15px;
+}
+#collectionPage .headLine > * {
+  display: inline-block;
+  vertical-align: -webkit-baseline-middle;
+}
+#collectionPage .list_sort_style {
+  float: right;
+  padding-bottom: 12px;
+}
+#collectionPage .list_sort_style p {
+  line-height: 24px;
+  font-size: 12px;
+  color: #989898;
+  display: inline;
+  margin-right: 6px;
+}
+#collectionPage .sortType {
+  display: inline-block;
+  vertical-align: middle;
+}
+#collectionPage .sortType span {
+  border: 1px solid #999;
+  color: #999;
+  line-height: 24px;
+  font-size: 12px;
+  height: 24px;
+  width: 4rem;
+  text-align: center;
+  display: inline-block;
+  margin-right: -1px;
+  cursor: pointer;
+}
+#collectionPage .sortType span.active {
+  background: #23bc88 !important;
+  color: #fff !important;
+}
+#collectionPage .sortType span:hover {
+  background: #fff;
+  color: #20bc87;
+}
+#collectionPage .sortType span:hover,
+#collectionPage .sortType span.active {
+  border-color: #23bc88;
+}
+#collectionPage #collection {
+  display: flex;
+  transition: opacity 0.2s ease;
+  justify-content: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
+}
+#collectionPage #collection li {
+  position: relative;
+  width: 13rem;
+  padding-bottom: 10px;
+  cursor: pointer;
+  margin-right: 9px;
+}
+#collectionPage #collection li:nth-child(3n+0) {
+  margin-right: 0;
+}
+#collectionPage #collection .collectionDesc {
+  position: absolute;
+  width: 100%;
+  font-size: 11px;
+  line-height: 22px;
+  text-align: right;
+  padding: 0 5px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+#collectionPage #collection .collectionDesc::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  background-image: url(../../images/listen.png);
+  background-size: 14px auto;
+  background-repeat: no-repeat;
+  background-position-y: 0px;
+  background-position-x: 0px;
+  background-clip: content-box;
+  background-origin: content-box;
+  height: 14px;
+  padding: 0 4px;
+  vertical-align: sub;
+}
+#collectionPage #collection.isHotList .collectionDesc::before {
+  display: none;
+}
+#collectionPage #collection img {
+  width: 13rem;
+  height: 13rem;
+}
+#collectionPage #collection .name {
+  display: block;
+  line-height: 32px;
+  height: 32px;
+  font-size: 12px;
+  color: #666;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#collectionPage #collection .name:hover {
+  color: #23bc88;
+}

@@ -1,0 +1,58 @@
+@fontGreen: #20bc87;
+@borderGray: #999;
+
+#SearchInput input[type=text]{
+	border: 1px #ccc solid;
+	width:12rem;
+	line-height: 30px;
+	height: 3rem;
+	padding: 0 1rem;
+	box-sizing: border-box;
+	font-family: "Microsoft YaHei", Arial, Verdana;
+	font-size: 14px;
+	color: #cdcdcd;
+	&:focus{
+		color: #000;
+		& + #poplist{display: block;}
+	}
+};
+#SearchInput{
+	display: inline-block;
+	position: relative;
+	padding-bottom: 12px;
+	&:hover{
+		#poplist{display: block;}
+	}
+};
+#SearchInput.canSearch{
+	#searchBtn {
+		i{background-position-y: -14px!important;}
+		pointer-events: inherit;
+	};
+};
+#searchBtn{
+	pointer-events: none;
+	opacity: 1;
+	position: absolute;
+	right:0;
+	top: 4px;
+};
+#poplist{
+	display: none;
+	position: absolute;
+	top: 30px;
+	background-color: white;
+	line-height: 20px;
+	padding: 7px 0 ;
+	width: 12rem;
+	box-sizing: border-box;
+	border: 1px solid @borderGray;
+	z-index: 99;
+	li{
+		padding: 0 7px ;
+		cursor: pointer;
+		&.active, &:hover{
+			color: @fontGreen;
+		}
+	}
+}

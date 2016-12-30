@@ -1,0 +1,68 @@
+/*变量*/
+/*基本颜色*/
+/*基本工具*/
+/*混合Mixin*/
+#collectionDetailPage {
+  padding: 0 30px 16px 20px;
+  white-space: nowrap;
+}
+#collectionDetailPage .mbx {
+  line-height: 50px;
+  color: #999;
+}
+#collectionDetailPage .mbx span {
+  color: #666;
+}
+#collectionDetailPage .top {
+  padding-bottom: 4px;
+}
+#collectionDetailPage .top img {
+  width: 10rem;
+  height: 10rem;
+  display: inline-block;
+  vertical-align: top;
+}
+#collectionDetailPage .top .intro {
+  display: inline-block;
+  width: 46.8rem;
+  line-height: 24px;
+  height: 24px;
+  color: #666;
+  padding-left: 20px;
+}
+#collectionDetailPage .top .intro .collectionIntro {
+  font-weight: 500;
+  line-height: 42px;
+  height: 42px;
+  font-size: 16px;
+}
+#collectionDetailPage .allCtrl {
+  padding: 16px 0;
+}
+#collectionDetailPage #song_container li {
+  color: #666;
+  cursor: pointer;
+  line-height: 34px;
+  height: 34px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+}
+#collectionDetailPage #song_container li .text {
+  width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: bottom;
+}
+#collectionDetailPage #song_container li span:hover {
+  color: #28bb89;
+}
+#collectionDetailPage #song_container li:hover {
+  background: #f8f8f8;
+}
+#collectionDetailPage #song_container .num {
+  margin-right: 8px;
+}
+#collectionDetailPage #song_container .fr {
+  float: right;
+}

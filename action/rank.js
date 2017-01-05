@@ -107,6 +107,31 @@ const _tagsReducer = (rankDatas, filter) => {
 	};
 };
 
+
+function* initPage (){
+	yield take('pageInit');
+	const result= yield call(getRecommendTags);
+	const tags 	= _tagsReducer(result.data, typeInfo.filter);
+	put({
+		type: RECEIVE_RECOMMEND_TAG,
+		data: {
+			rankTags: tags.rankTags,
+			rankClass:{[typeName]: tags.rankTags_IDArray}
+		}
+	});
+	put({
+		type: setCurrentRankTag,
+		data: {activeTagId, pageIndex}
+	});
+}
+function* _setCurrentRankTag (action){
+	while (true){
+		yield take('setCurrentRankTag');
+		
+	}
+}
+
+
 /*
 * 页面初始化就要获取推荐的rank标签并在获取后要立即请求默认的rank歌曲.
 * */
@@ -115,11 +140,17 @@ export function getAllRecommendTag_toLoadSong(activeTagId, pageIndex) {
 		const types = _rankListRequest.type;
 		Object.keys(types).forEach(function (typeName) {
 			const typeInfo = types[typeName];
-			superRequest({
+
+			// 请求数据
+			return superRequest({
 				url: typeInfo.URL,
 				type: _rankListRequest.requestMethod,
-				success: function (result) {
-					const tags = _tagsReducer(result.data, typeInfo.filter);
+			})
+				.then((result) => (
+					_tagsReducer(result.data, typeInfo.filter)
+				))
+				.then(function (tags) {
+					// 渲染
 					dispatch({
 						type: RECEIVE_RECOMMEND_TAG,
 						data: {
@@ -127,20 +158,25 @@ export function getAllRecommendTag_toLoadSong(activeTagId, pageIndex) {
 							rankClass:{[typeName]: tags.rankTags_IDArray}
 						}
 					});
-
+					return tags;
+				})
+				.then(function (tags) {
+					// 请求歌曲
 					if(activeTagId && tags.rankTags[activeTagId]){
 						// 加载指定的rankTag的歌曲,
 						dispatch(setCurrentRankTag(activeTagId, pageIndex));
+
 					}else if(!activeTagId && typeName == 'HOT_RANK') {
 						// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
 						activeTagId = tags.rankTags[tags.rankTags_IDArray[0]].rank_id;
 						dispatch(setCurrentRankTag(activeTagId, pageIndex));
 					}
-
-					// 最后获取rankTag的完整信息
-					dispatch(getRankTagAllInfo(tags.idArrays));
-				}
-			});
+					return tags;
+				})
+				.then(function (tags) {
+					// 最后, 请求rankTag的完整信息
+					dispatch(getRankTagAllInfo(tags.idArrays))
+				});
 		});
 	};
 }
@@ -152,12 +188,11 @@ function getRankTagAllInfo (idArrays) {
 		superRequest({
 			url: _rankDetailRequest.URL,
 			data: _rankDetailRequest.defaultParams,
-			success: function (result) {
-				dispatch({
-					type: RECEIVE_RANK_DETAIL,
-					data : result.data
-				});
-			}
+		}).then(function (result) {
+			dispatch({
+				type: RECEIVE_RANK_DETAIL,
+				data : result.data
+			});
 		});
 	}
 }
@@ -165,18 +200,17 @@ function getRankTagAllInfo (idArrays) {
 function getRankDate(rank_id) {
 	return (dispatch) => {
 		_rankDateRequest.defaultParams.data[0].parent_id = rank_id;
-		superRequest({
+		return superRequest({
 			url: _rankDateRequest.URL,
 			data: _rankDateRequest.defaultParams,
-			success: function (result) {
-				dispatch({
-					type: RECEIVE_RANK_DATE,
-					data : {
-						data: result.data,
-						parent_rank_id: rank_id
-					}
-				});
-			}
+		}).then(function (result) {
+			dispatch({
+				type: RECEIVE_RANK_DATE,
+				data : {
+					data: result.data,
+					parent_rank_id: rank_id
+				}
+			});
 		})
 	}
 }
@@ -190,21 +224,20 @@ function getRankSongs(rank_id, pageIndex) {
 		params.page = pageIndex;
 		params.rank_id = rank_id;
 		params.pageSize = 30;
-		superRequest({
+		return superRequest({
 			url: _rankSongsRequest.URL,
 			data: params,
-			success: function (result) {
-				dispatch({
-					type: RECEIVE_RANK_SONGS,
-					data: {
-						songs: result.data,
-						pageSize: params.pageSize,
-						pageIndex,
-						rankDateId: rank_id,
-						totalSongsLen: result.total
-					},
-				});
-			}
+		}).then(function (result) {
+			dispatch({
+				type: RECEIVE_RANK_SONGS,
+				data: {
+					songs: result.data,
+					pageSize: params.pageSize,
+					pageIndex,
+					rankDateId: rank_id,
+					totalSongsLen: result.total
+				},
+			});
 		})
 	}
 }
@@ -248,8 +281,9 @@ export function setCurrentRankPage(pageIndex) {
 		dispatch(getRankSongs(
 			state.Rank.current.rankTag && state.Rank.current.rankTag.rank_id,
 			pageIndex
-		));
-		dispatch(push('Rank/'+state.Rank.current.rankTag.rank_id+'/'+ pageIndex));
+		)).then(function () {
+			dispatch(push('Rank/'+state.Rank.current.rankTag.rank_id+'/'+ pageIndex))
+		})
 	}
 }
 

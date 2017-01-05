@@ -18,6 +18,28 @@ export function completeImgUrl (imgFileName) {
 	const url = config.singerImgUrl + pre + '/' + imgFileName;
 	return url || config.singerDefaultImg;
 }
+
+function _fxcSuperCall (data) {
+	if(!window.external.fxcSuperCall){return false;}
+	return new Promise(function (resolve, reject) {
+		data.callback = function (o) {
+			const preText = '['+data.url.slice(29)+ "]接口:";
+			try {
+				const JSONData = JSON.parse(o);
+				console.log(preText, [JSONData, data]);
+				if(+JSONData.status === 1){
+					resolve(JSONData);
+				} else {
+					reject(JSONData);
+				}
+			} catch (e) {
+				console.warn(preText, o, e);
+				reject(o);
+			}
+		};
+		window.external.fxcSuperCall(superCallSID.REQUEST, data);
+	});
+}
 export function superRequest (argsObj) {
 	// 补充
 	if(argsObj.url.indexOf('http://') < 0){argsObj.url = config.url + argsObj.url;}
@@ -33,7 +55,6 @@ export function superRequest (argsObj) {
 		success: null,
 		error: null,
 		fail: null,
-		always: null,
 		timeout: null, // 仅在传参了超时回调才js设3秒的定时器监听返回值
 		contentType: contentTypeObj[1],
 		cache: 0
@@ -45,39 +66,12 @@ export function superRequest (argsObj) {
 		data[key] = argsObj[key];
 	});
 
-	const timeout = typeof data.timeoutCallback === 'function' && setTimeout(function () {
-			data.timeoutCallback();
-		}, 3000);
-
 	//将post的data转为字符串
 	if (typeof data.data != "string") {
 		data.data = JSON.stringify(data.data);
 	}
-	//将返回的数据转换为json然后执行callback
-	data.callback = function (o) {
-		if (timeout) {clearTimeout(timeout);}
 
-		const preText = '['+data.url.slice(29)+ "]接口:";
-		try {
-			const JSONData = JSON.parse(o);
-			console.log(preText, [JSONData, data]);
-			if(+JSONData.status === 1){
-				if(typeof data.success === 'function'){data.success(JSONData);}
-			} else {
-				if(typeof data.error === 'function'){data.error(JSONData);}
-			}
-		} catch (e) {
-			console.warn(preText, o, e);
-			if(typeof data.fail === 'function'){data.fail(o);}
-		}
-		if(typeof data.always === 'function'){data.always(o);}
-	};
-
-	try {
-		window.external.fxcSuperCall(superCallSID.REQUEST, data);
-	} catch (ex) {
-		console.log("哎呀报错了，supercall需要在客户端执行才正常！");
-	}
+	return _fxcSuperCall(data);
 }
 export function getSearchWords () {
 	let hash = window.location.hash;

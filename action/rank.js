@@ -1,6 +1,4 @@
 'use strict';
-import {config} from './Global';
-
 // 常量: 服务器返回信息
 export const RECEIVE_RECOMMEND_TAG = 'RECEIVE_RECOMMEND_TAG';
 export const RECEIVE_RANK_DETAIL = 'RECEIVE_RANK_DETAIL';
@@ -55,8 +53,7 @@ export const _toggleDatePanel = (boolean) => ({
 	data: boolean
 });
 
-
-
+import {config} from './Global';
 import {superRequest} from '../utils/index';
 import {_tagsReducer} from '../reducers/Rank/';
 /*获取排行榜歌曲的接口*/
@@ -81,70 +78,114 @@ const _rankDateRequest = {
 const _rankDetailRequest = {
 	URL: 'container/v1/rank',
 	defaultParams:  Object.assign({...config.param}, {data: {data: []}})
-
 };
 /*获取排行榜标签*/
-const _rankListRequest = {
-	requestMethod: 'get',
-	type: {
-		HOT_RANK: { // 热门榜单
-			URL: 'http://lib2.service.kugou.com/recommend/data?id=175',
-			filter:'type'
-		},
-		GLOBAL_RANK: { // 全球榜单
-			URL: 'http://lib2.service.kugou.com/recommend/data?id=298',
-			filter:'is_show'
-		},
-		SPECIAL_RANK: { // 特色榜单
-			URL: 'http://lib2.service.kugou.com/recommend/data?id=299',
-			filter:'is_show'
+const
+	_rankListRequest = {
+		requestMethod: 'get',
+		URL: 'http://lib2.service.kugou.com/recommend/data?id=',
+		list:[{
+			name:'HOT_RANK',
+			id: 175,
+			filter: 'type'
+		},{
+			name:'GLOBAL_RANK',
+			id: 298,
+			filter: 'is_show'
+		},{
+			name:'SPECIAL_RANK',
+			id: 299,
+			filter: 'is_show'
 		}
-	}
-};
+		]
+	},
+	eachClassType = (handler) => (
+		Promise.all(_rankListRequest.list.map(handler))
+	),
+	callRecommendTag = (id) => (
+		superRequest({
+			url: _rankListRequest.URL + id,
+			type: _rankListRequest.requestMethod
+		})
+	),
+	getRecommendTag = (id, typeName) => (
+		(dispatch) => (
+			callRecommendTag(id)
+				.then((result) => (_tagsReducer(result, filter)))
+				.then(function (tags) {
+					// 更新store
+					dispatch(receiveRecommendTag(tags.rankTags, {[typeName]: tags.rankTags_IDArray}));
+					// 请求rankTag的完整信息 fork
+					dispatch(getRankTagAllInfo(tags.idArrays));
+					return tags;
+				})
+		)
+	);
 
 /*异步的action creator*/
+/*页面初始化就要获取推荐的rank标签并在获取后要立即请求默认的rank歌曲.*/
 /*
-* 页面初始化就要获取推荐的rank标签并在获取后要立即请求默认的rank歌曲.
-* */
-export function getAllRecommendTag_toLoadSong(activeTagId, pageIndex) {
-	return (dispatch) => {
-		const types = _rankListRequest.type;
-		Object.keys(types).forEach(function (typeName) {
-			const typeInfo = types[typeName];
-
-			// 请求数据
-			return superRequest({
-				url: typeInfo.URL,
-				type: _rankListRequest.requestMethod,
-			})
-				.then((result) => (
-					_tagsReducer(result.data, typeInfo.filter)
-				))
-				.then(function (tags) {
-					// 渲染
-					dispatch(receiveRecommendTag(tags.rankTags, {[typeName]: tags.rankTags_IDArray}));
-					return tags;
-				})
-				.then(function (tags) {
-					// 请求歌曲
-					if(activeTagId && tags.rankTags[activeTagId]){
-						// 加载指定的rankTag的歌曲,
-						dispatch(setCurrentRankTag(activeTagId, pageIndex));
-
-					}else if(!activeTagId && typeName == 'HOT_RANK') {
-						// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
-						activeTagId = tags.rankTags[tags.rankTags_IDArray[0]].rank_id;
-						dispatch(setCurrentRankTag(activeTagId, pageIndex));
-					}
-					return tags;
-				})
-				.then(function (tags) {
-					// 最后, 请求rankTag的完整信息
-					dispatch(getRankTagAllInfo(tags.idArrays))
-				});
-		});
-	};
+ * 加载tagList -> 加载默认歌曲
+ * 分别加载三个tagList -> 加载Hot tagList的歌曲
+ * 指定的tagId -> 加载三个tagList -> 各第一时间检测来加载歌曲
+ * */
+export function getAllRecommendTag_toLoadSong (activeTagId, pageIndex){
+	return (dispatch) => (
+		eachClassType(function ({id, filter, typeName}) {
+			const getDefaultSongs = ({rankTags, rankTags_IDArray}) => (
+				activeTagId ? (// 加载指定的rankTag的歌曲,
+					rankTags[activeTagId] && dispatch(setCurrentRankTag(activeTagId, pageIndex))
+				):(// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
+					typeName == 'HOT_RANK' && dispatch(setCurrentRankTag(rankTags[rankTags_IDArray[0]].rank_id, pageIndex))
+				)
+			);
+			return dispatch(getRecommendTag(id, filter, typeName)).then(getDefaultSongs)
+		})
+	)
 }
+
+/*用户操作系列*/
+export function setCurrentRankTag(rank_id, pageIndex) {
+	return (dispatch) => {
+		// 户点击RankTag时pageIndex等于undefined, 但刷新页面的pageIndex可能是有路由参数值
+		pageIndex = (pageIndex === undefined) ? 1 : pageIndex;
+
+		// 改变页面显示状态, 高亮所选的, 且页码要回归到指定的.
+		dispatch(changeRankTag(rank_id));
+		// 获取rank歌曲
+		dispatch(getRankSongs(rank_id, pageIndex));
+		// 获取rank的日期版本
+		dispatch(getRankDate(rank_id));
+	}
+}
+export function setCurrentRankDate(rankDateId) {
+	return (dispatch) => {
+		const pageIndex = 1; // 选择日历Rank默认是回归到第一页
+		dispatch(changeRankDate(rankDateId, pageIndex));
+		dispatch(getRankSongs(rankDateId, pageIndex));
+	}
+}
+export function setCurrentRankPage(pageIndex) {
+	return (dispatch, getState) => {
+		const state = getState();
+		dispatch(changeRankPage(pageIndex));
+		dispatch(getRankSongs(
+			state.Rank.current.rankTag && state.Rank.current.rankTag.rank_id,
+			pageIndex
+		))
+	}
+}
+
+export function toggleDatePanel(boolean) {
+	return (dispatch, getState) => {
+		if(boolean === undefined){
+			const state = getState();
+			boolean = !state.Rank.current.displayDatePanel;
+		}
+		dispatch(_toggleDatePanel(boolean));
+	}
+}
+/*内部的异步action*/
 
 /*获取rankTag的完整信息, 这里主要是获取rankTag的image信息*/
 function getRankTagAllInfo (idArrays) {
@@ -195,44 +236,87 @@ function getRankSongs(rank_id, pageIndex) {
 	}
 }
 
-/*用户操作系列*/
-export function setCurrentRankTag(rank_id, pageIndex) {
-	return (dispatch) => {
-		// 户点击RankTag时pageIndex等于undefined, 但刷新页面的pageIndex可能是有路由参数值
-		pageIndex = (pageIndex === undefined) ? 1 : pageIndex;
 
-		// 改变页面显示状态, 高亮所选的, 且页码要回归到指定的.
-		dispatch(changeRankTag(rank_id));
-		// 获取rank歌曲
-		dispatch(getRankSongs(rank_id, pageIndex));
-		// 获取rank的日期版本
-		dispatch(getRankDate(rank_id));
-	}
-}
-export function setCurrentRankDate(rankDateId) {
-	return (dispatch) => {
-		const pageIndex = 1; // 选择日历Rank默认是回归到第一页
-		dispatch(changeRankDate(rankDateId, pageIndex));
-		dispatch(getRankSongs(rankDateId, pageIndex));
-	}
-}
-export function setCurrentRankPage(pageIndex) {
-	return (dispatch, getState) => {
-		const state = getState();
-		dispatch(changeRankPage(pageIndex));
-		dispatch(getRankSongs(
-			state.Rank.current.rankTag && state.Rank.current.rankTag.rank_id,
-			pageIndex
-		))
-	}
-}
+/*不适合的*/
 
-export function toggleDatePanel(boolean) {
-	return (dispatch, getState) => {
-		if(boolean === undefined){
-			const state = getState();
-			boolean = !state.Rank.current.displayDatePanel;
-		}
-		dispatch(_toggleDatePanel(boolean));
-	}
-}
+//function getAllRecommendTag (){
+//	return Promise.all([
+//		superRequest({
+//			url: 'http://lib2.service.kugou.com/recommend/data?id=175',
+//			type: 'get'
+//		}).then((result) => (_tagsReducer(result, 'type'))),
+//		superRequest({
+//			url: 'http://lib2.service.kugou.com/recommend/data?id=298',
+//			type: 'get'
+//		}).then((result) => (_tagsReducer(result, 'is_show'))),
+//		superRequest({
+//			url: 'http://lib2.service.kugou.com/recommend/data?id=299',
+//			type: 'get'
+//		}).then((result) => (_tagsReducer(result, 'is_show')))
+//	])
+//}
+//
+//function initialPage (activeTagId, pageIndex){
+//	return (dispatch) => (
+//		getAllRecommendTag()
+//			.then(function (tags) {
+//				// 渲染
+//				dispatch(receiveRecommendTag(tags.rankTags));
+//				return tags;
+//			})
+//			.then(function (tags) {
+//				// 加载指定的rankTag的歌曲, 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
+//				activeTagId = activeTagId || tags.rankTags[tags.rankTags_IDArray[0]].rank_id;
+//
+//				dispatch(setCurrentRankTag(activeTagId, pageIndex));
+//				return tags;
+//			})
+//			.then(function (tags) {
+//				// 最后, 请求rankTag的完整信息
+//				dispatch(getRankTagAllInfo(tags.idArrays))
+//			})
+//	)
+//}
+
+/*过去式*/
+//export function getAllRecommendTag_toLoadSong2(activeTagId, pageIndex) {
+//	return (dispatch) => {
+//		let ary = [];
+//		Object.keys(_rankListRequest.type).forEach(function (typeName) {
+//			const typeInfo = _rankListRequest.type[typeName];
+//			// 请求数据
+//			ary.push(
+//				superRequest({
+//					url: typeInfo.URL,
+//					type: _rankListRequest.requestMethod,
+//				})
+//					.then((result) => (
+//						_tagsReducer(result.data, typeInfo.filter)
+//					))
+//					.then(function (tags) {
+//						// 渲染
+//						dispatch(receiveRecommendTag(tags.rankTags, {[typeName]: tags.rankTags_IDArray}));
+//						return tags;
+//					})
+//					.then(function (tags) {
+//						// 请求歌曲
+//						if(activeTagId && tags.rankTags[activeTagId]){
+//							// 加载指定的rankTag的歌曲,
+//							dispatch(setCurrentRankTag(activeTagId, pageIndex));
+//
+//						}else if(!activeTagId && typeName == 'HOT_RANK') {
+//							// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
+//							activeTagId = tags.rankTags[tags.rankTags_IDArray[0]].rank_id;
+//							dispatch(setCurrentRankTag(activeTagId, pageIndex));
+//						}
+//						return tags;
+//					})
+//					.then(function (tags) {
+//						// 最后, 请求rankTag的完整信息
+//						dispatch(getRankTagAllInfo(tags.idArrays))
+//					})
+//			)
+//		});
+//		return Promise.all(ary);
+//	};
+//}

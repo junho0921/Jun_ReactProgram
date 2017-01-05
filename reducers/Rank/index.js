@@ -41,15 +41,15 @@ const initialState = {
 	},
 };
 
-export function _tagsReducer (rankDatas, filter) {
+export function _tagsReducer (result, filter) {
 	// 数据处理
 	let renderDatas = [],
 		rankTags = {},
 		idArrays = [],
 		rankTags_IDArray;
 
-	Object.keys(rankDatas).forEach(function (key) {
-		const value = rankDatas[key];
+	Object.keys(result.data).forEach(function (key) {
+		const value = result.data[key];
 		// 过滤榜单标签
 		if(+value[filter]){
 			value.sort = +value.sort;

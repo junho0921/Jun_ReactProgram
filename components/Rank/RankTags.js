@@ -5,6 +5,7 @@ import React from 'react';
 /*action*/
 import {setCurrentRankTag, getAllRecommendTag_toLoadSong} from '../../action/rank';
 import {connect} from 'react-redux';
+import { push } from 'react-router-redux';
 
 const RankClassList = ['HOT_RANK', 'GLOBAL_RANK', 'SPECIAL_RANK'];
 
@@ -30,7 +31,10 @@ class RankTagList extends React.Component {
 			props.initialPageIndex
 		));
 
-		this.onSelectTag = (rank_id) => {dispatch(setCurrentRankTag(rank_id))};
+		this.onSelectTag = (rank_id) => {
+			dispatch(setCurrentRankTag(rank_id));
+			dispatch(push('Rank/'+rank_id+ '/1'));
+		};
 	}
 	shouldComponentUpdate(newProps){
 		const pastProps = this.props;

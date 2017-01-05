@@ -75,8 +75,6 @@ export const CONTROL_SONG = 'CONTROL_SONG';
 // 常量: 状态
 export const LOADING_SONGS = 'LOADING_SONGS';
 
-import { push } from 'react-router-redux';
-
 const _tagsReducer = (rankDatas, filter) => {
 	// 数据处理
 	let renderDatas = [],
@@ -247,8 +245,7 @@ export function setCurrentRankTag(rank_id, pageIndex) {
 	return (dispatch) => {
 		// 户点击RankTag时pageIndex等于undefined, 但刷新页面的pageIndex可能是有路由参数值
 		pageIndex = (pageIndex === undefined) ? 1 : pageIndex;
-		// 路由
-		dispatch(push('Rank/'+rank_id+ '/'+pageIndex));
+
 		// 改变页面显示状态, 高亮所选的, 且页码要回归到指定的.
 		dispatch({
 			type: CHANGE_RANK_TAG,
@@ -258,7 +255,6 @@ export function setCurrentRankTag(rank_id, pageIndex) {
 		dispatch(getRankSongs(rank_id, pageIndex));
 		// 获取rank的日期版本
 		dispatch(getRankDate(rank_id));
-
 	}
 }
 export function setCurrentRankDate(rankDateId) {
@@ -281,9 +277,7 @@ export function setCurrentRankPage(pageIndex) {
 		dispatch(getRankSongs(
 			state.Rank.current.rankTag && state.Rank.current.rankTag.rank_id,
 			pageIndex
-		)).then(function () {
-			dispatch(push('Rank/'+state.Rank.current.rankTag.rank_id+'/'+ pageIndex))
-		})
+		))
 	}
 }
 

@@ -12,6 +12,7 @@ import AllCtrlBtn from '../common/AllCtrlBtn';
 import SongList from '../common/SongList';
 import PageIndex from '../common/PageIndex';
 import RankDate from '../common/RankDate/index';
+import { push } from 'react-router-redux';
 
 import {setCurrentRankPage, setCurrentRankDate, toggleDatePanel} from '../../action/rank';
 
@@ -20,7 +21,10 @@ class Rank extends React.Component {
 		super(props);
 		const _this = this, dispatch = props.dispatch;
 
-		this.setPageIndex = (pageIndex) => (dispatch(setCurrentRankPage(pageIndex)));
+		this.setPageIndex = (pageIndex) => {
+			dispatch(setCurrentRankPage(pageIndex));
+			dispatch(push('Rank/'+this.props.currentRankId+'/'+ pageIndex))
+		};
 
 		this.onSelectDate = (rank_id) => {dispatch(setCurrentRankDate(rank_id));};
 

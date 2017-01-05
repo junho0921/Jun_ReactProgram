@@ -17,7 +17,7 @@ import {
 	LOADING_SONGS
 } from "../../action/rank";
 
-import {songPrivilege} from '../../utils/index';
+import {songPrivilege, by} from '../../utils/index';
 
 const initialState = {
 	rankTags:{
@@ -41,7 +41,37 @@ const initialState = {
 	},
 };
 
-const Rank = (state = initialState, action) => {
+export function _tagsReducer (rankDatas, filter) {
+	// 数据处理
+	let renderDatas = [],
+		rankTags = {},
+		idArrays = [],
+		rankTags_IDArray;
+
+	Object.keys(rankDatas).forEach(function (key) {
+		const value = rankDatas[key];
+		// 过滤榜单标签
+		if(+value[filter]){
+			value.sort = +value.sort;
+			const rank_id = value.cid;
+			idArrays.push({rank_id});
+			rankTags[rank_id] = {
+				rank_name: value.rankname,
+				rank_id: rank_id
+			};
+			renderDatas.push(value);
+		}
+	});
+	renderDatas.sort(by('sort'));
+	rankTags_IDArray = renderDatas.map((item) => (item.cid));
+	return {
+		rankTags,
+		idArrays,
+		rankTags_IDArray
+	};
+}
+
+export default Rank = (state = initialState, action) => {
 	const data = action.data;
 
 	switch (action.type){
@@ -139,5 +169,4 @@ const Rank = (state = initialState, action) => {
 			return state;
 	}
 	return state;
-};
-export default Rank;
+}

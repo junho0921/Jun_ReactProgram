@@ -40,6 +40,23 @@ function _fxcSuperCall (data) {
 		window.external.fxcSuperCall(superCallSID.REQUEST, data);
 	});
 }
+
+export function by (value) {
+	return function(o, p) {
+		if(typeof o === 'object' && typeof p === 'object' && o && p){
+			let a = o[value];
+			let b = p[value];
+			if(a === b){
+				return 0;
+			}
+			if(typeof a === typeof b) {
+				return a < b ? -1 : 1;
+			}
+			return typeof a < typeof b ? -1 : 1;
+		}
+	};
+}
+
 export function superRequest (argsObj) {
 	// 补充
 	if(argsObj.url.indexOf('http://') < 0){argsObj.url = config.url + argsObj.url;}

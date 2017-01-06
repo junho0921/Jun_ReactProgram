@@ -29,29 +29,32 @@ export const receiveRankDate = (data, parent_rank_id) => ({
 	type: RECEIVE_RANK_DATE,
 	data : {data, parent_rank_id}
 });
-export const receiveRankSongs = (songs, pageSize, pageIndex, rankDateId, totalSongsLen) => ({
+export const receiveRankSongs = (songs, pageSize, rankDateId, totalSongsLen) => ({
 	type: RECEIVE_RANK_SONGS,
-	data: {songs, pageSize, pageIndex, rankDateId, totalSongsLen},
+	data: {songs, pageSize, rankDateId, totalSongsLen},
 });
 export const loadingSongs = () => ({
 	type: LOADING_SONGS
 });
-export const changeRankTag = (rank_id) => ({
-	type: CHANGE_RANK_TAG,
-	data: {rank_id}
+export const changeRankTag = () => ({
+	type: CHANGE_RANK_TAG
 });
-export const changeRankDate = (rankDateId, pageIndex) => ({
+export const changeRankDate = (rankDateId) => ({
 	type: CHANGE_RANK_DATE,
-	data: {rankDateId, pageIndex}
+	data: {rankDateId}
 });
-export const changeRankPage = (pageIndex) => ({
-	type: CHANGE_RANK_PAGE,
-	data: pageIndex
+export const changeRankPage = () => ({
+	type: CHANGE_RANK_PAGE
 });
 export const _toggleDatePanel = (boolean) => ({
 	type: TOGGLE_DATE_PANEL,
 	data: boolean
 });
+
+/*===============================*/
+/*===============================*/
+/*===============================*/
+/*===============================*/
 
 import {config} from './Global';
 import {superRequest} from '../utils/index';
@@ -147,13 +150,10 @@ export function getAllRecommendTag_toLoadSong (activeTagId, pageIndex){
 /*用户操作系列*/
 export function setCurrentRankTag(rank_id, pageIndex) {
 	return (dispatch) => {
-		// 户点击RankTag时pageIndex等于undefined, 但刷新页面的pageIndex可能是有路由参数值
-		pageIndex = (pageIndex === undefined) ? 1 : pageIndex;
-
 		// 改变页面显示状态, 高亮所选的, 且页码要回归到指定的.
-		dispatch(changeRankTag(rank_id));
+		dispatch(changeRankTag());
 		// 获取rank歌曲
-		dispatch(getRankSongs(rank_id, pageIndex));
+		dispatch(getRankSongs(rank_id, pageIndex || 1));
 		// 获取rank的日期版本
 		dispatch(getRankDate(rank_id));
 	}
@@ -165,14 +165,10 @@ export function setCurrentRankDate(rankDateId) {
 		dispatch(getRankSongs(rankDateId, pageIndex));
 	}
 }
-export function setCurrentRankPage(pageIndex) {
-	return (dispatch, getState) => {
-		const state = getState();
-		dispatch(changeRankPage(pageIndex));
-		dispatch(getRankSongs(
-			state.Rank.current.rankTag && state.Rank.current.rankTag.rank_id,
-			pageIndex
-		))
+export function setCurrentRankPage(rank_id, pageIndex) {
+	return (dispatch) => {
+		dispatch(changeRankPage());
+		dispatch(getRankSongs(rank_id, pageIndex))
 	}
 }
 
@@ -228,7 +224,6 @@ function getRankSongs(rank_id, pageIndex) {
 			dispatch(receiveRankSongs(
 				result.data,
 				params.pageSize,
-				pageIndex,
 				rank_id,
 				result.total
 			));

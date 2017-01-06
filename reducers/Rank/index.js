@@ -31,14 +31,15 @@ const initialState = {
 	songs: [],
 	date: [],
 	current: {
-		rankTag: null, 		// (object)
 		rankDateId: null,	// (object) 日历控件的激活标签Id
 		totalSongsLen: null,
 		pageSize: null,
 		loadingSongs: false,
-		displayDatePanel: false, // 控制日历控件的展示 可能需要优化
-		pageIndex: 1
+		displayDatePanel: false // 控制日历控件的展示 可能需要优化
 	},
+	/*
+	* 路由参数有: rank_id, pageIndex
+	* */
 };
 
 export function _tagsReducer (result, filter) {
@@ -92,11 +93,9 @@ export default Rank = (state = initialState, action) => {
 
 		case RECEIVE_RANK_DATE:
 			const dateDate = (data.data && data.data[0]) || [];
-			const rankTag = state.rankTags[data.parent_rank_id];
 			return Object.assign({...state}, {
 				dates: dateDate,
 				current: Object.assign({...state.current}, {
-					rankTag,
 					rankDateId: data.rank_id
 				})
 			});
@@ -110,7 +109,6 @@ export default Rank = (state = initialState, action) => {
 				current: Object.assign({...state.current}, {
 					totalSongsLen : data.totalSongsLen,
 					pageSize : 		data.pageSize,
-					pageIndex : 	data.pageIndex,
 					rankDateId : 	data.rankDateId,
 					loadingSongs : 	false
 				})
@@ -118,30 +116,24 @@ export default Rank = (state = initialState, action) => {
 
 		/*用户操作系列*/
 		case CHANGE_RANK_TAG:
-			const _rankTag = state.rankTags[data.rank_id];
-			if(_rankTag){
-				return Object.assign({...state}, {
-					dates: [], // 必须清理date数据, 为了卸载日历组件.
-					current: Object.assign({...state.current}, {
-						rankTag: _rankTag,
-						pageSize: null
-					}),
-					songs: [] // 先清空歌曲列表
-				});
-			}
+			return Object.assign({...state}, {
+				dates: [], // 必须清理date数据, 为了卸载日历组件.
+				current: Object.assign({...state.current}, {
+					pageSize: null
+				}),
+				songs: [] // 先清空歌曲列表
+			});
 			break;
 		case CHANGE_RANK_DATE:
 			return Object.assign({...state}, {
 				current: Object.assign({...state.current}, {
-					rankDateId: data.dateId,
-					pageIndex: data.pageIndex
+					rankDateId: data.rankDateId
 				}),
 				songs: [] // 先清空歌曲列表
 			});
 			break;
 		case CHANGE_RANK_PAGE:
 			return Object.assign({...state}, {
-				current: Object.assign({...state.current}, {pageIndex: data}),
 				songs: [] // 先清空歌曲列表
 			});
 

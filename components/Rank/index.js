@@ -22,11 +22,17 @@ class Rank extends React.Component {
 		const _this = this, dispatch = props.dispatch;
 
 		this.setPageIndex = (pageIndex) => {
-			dispatch(setCurrentRankPage(pageIndex));
-			dispatch(push('Rank/'+this.props.currentRankId+'/'+ pageIndex))
+			dispatch(setCurrentRankPage(_this.props.params.rank_id, pageIndex));
+			dispatch(push('Rank/'+ _this.props.params.rank_id+'/'+ pageIndex));
 		};
 
-		this.onSelectDate = (rank_id) => {dispatch(setCurrentRankDate(rank_id));};
+		this.onSelectDate = (rank_id) => {
+			dispatch(setCurrentRankDate(rank_id));
+			const routesParams = _this.props.params;
+			if(routesParams.pageIndex != 1){
+				dispatch(push('Rank/'+ routesParams.rank_id+'/'+ 1));
+			}
+		};
 
 		this.hideRankDatePanelIfBlur = (e) => {
 			if(e.target && !_this.refs.RankDate.contains(e.target)){ _this.hideDatePanel(); }
@@ -62,7 +68,7 @@ class Rank extends React.Component {
 							onSelectDate={this.onSelectDate}
 							dates={props.dates}
 							/*注意: key是组件重新渲染的重要依据*/
-							key={props.currentRankId}
+							key={props.params.rank_id}
 
 							displayDatePanel={props.displayDatePanel}
 							toggleDatePanel={this.toggleDatePanel}
@@ -85,14 +91,14 @@ class Rank extends React.Component {
 export default connect(
 	(state, props) => {
 		const current = state.Rank.current,
-			currentRankTag = current.rankTag,
+			currentRankTag = state.Rank.rankTags[props.params.rank_id],
 			currentRankTitle = currentRankTag && currentRankTag.rank_name || '',
 			maxPageIndex = +current.pageSize && +current.totalSongsLen && Math.ceil(
 				current.totalSongsLen / current.pageSize
 			) || 0;
 		const
 			pageIndex = props.params.pageIndex || 1,
-			preIndex = pageIndex && ((pageIndex - 1) * current.pageSize + 1);
+			preIndex = (pageIndex - 1) * current.pageSize + 1;
 
 		const result = {
 			// 页码
@@ -109,7 +115,6 @@ export default connect(
 			displayDatePanel: current.displayDatePanel,
 			// 日历组件数据
 			dates : state.Rank.dates,
-			currentRankId : currentRankTag && currentRankTag.rank_id,
 			currentRankDateId : current.rankDateId
 		};
 		// console.log('_____rank_props______', result);

@@ -32,7 +32,7 @@ class RankTagList extends React.Component {
 		));
 
 		this.onSelectTag = (rank_id) => {
-			dispatch(setCurrentRankTag(rank_id));
+			dispatch(setCurrentRankTag(rank_id, 1));
 			dispatch(push('Rank/'+rank_id+ '/1'));
 		};
 	}

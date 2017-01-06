@@ -8,13 +8,11 @@ import {
 	RECEIVE_RANK_DATE,
 	RECEIVE_RANK_SONGS,
 
-	CHANGE_RANK_TAG,
-	CHANGE_RANK_DATE,
-	CHANGE_RANK_PAGE,
 	TOGGLE_DATE_PANEL,
-	CONTROL_SONG,
+	RESET_UI,
 
-	LOADING_SONGS
+	CLEAR_DATES,
+	CLEAR_SONGS
 } from "../../action/rank";
 
 import {songPrivilege, by} from '../../utils/index';
@@ -101,61 +99,37 @@ export default Rank = (state = initialState, action) => {
 			});
 
 		case RECEIVE_RANK_SONGS:
-			let songs = data.songs = data.songs || [];
+			let songs = data.data = data.data || [];
 			songs.forEach(songPrivilege);
 
 			return Object.assign({...state}, {
 				songs,
 				current: Object.assign({...state.current}, {
-					totalSongsLen : data.totalSongsLen,
-					pageSize : 		data.pageSize,
-					rankDateId : 	data.rankDateId,
-					loadingSongs : 	false
+					totalSongsLen : data.total
 				})
 			});
 
+		case RESET_UI:
+			return Object.assign({...state}, {
+				current: Object.assign({...state.current}, data)
+			});
+
 		/*用户操作系列*/
-		case CHANGE_RANK_TAG:
+		case CLEAR_DATES:
 			return Object.assign({...state}, {
-				dates: [], // 必须清理date数据, 为了卸载日历组件.
-				current: Object.assign({...state.current}, {
-					pageSize: null
-				}),
-				songs: [] // 先清空歌曲列表
+				dates: [] // 必须清理date数据, 为了卸载日历组件.
 			});
 			break;
-		case CHANGE_RANK_DATE:
-			return Object.assign({...state}, {
-				current: Object.assign({...state.current}, {
-					rankDateId: data.rankDateId
-				}),
-				songs: [] // 先清空歌曲列表
-			});
-			break;
-		case CHANGE_RANK_PAGE:
-			return Object.assign({...state}, {
-				songs: [] // 先清空歌曲列表
-			});
 
 		case TOGGLE_DATE_PANEL:
 			return Object.assign({...state}, {
 				current: Object.assign({...state.current}, {displayDatePanel: data})
 			});
 
-		case LOADING_SONGS:
+		case CLEAR_SONGS:
 			return Object.assign({...state}, {
-				current: Object.assign({...state.current}, {loadingSongs: true})
+				songs: [], // 先清空歌曲列表
 			});
-
-		case CONTROL_SONG:
-			if(data.song.length){
-				let i = 0, ary = [];
-				for(; i < 10; i++){ary.push(data.song[i].filename)}
-				console.log(data.type.toUpperCase(), 'SONG', '==>', ary);
-			}else{
-				console.log(data.type.toUpperCase(), 'SONG', '==>', data.song.filename);
-			}
-			return state;
 
 		default:
 			return state;

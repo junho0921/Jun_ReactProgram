@@ -3,14 +3,13 @@
  */
 import React from 'react';
 import {connect} from 'react-redux';
-import {controlSong} from '../../action/rank';
 
 function AllCtrlBtn (props) {
 	console.log('渲染组件 AllCtrlBtn');
 	const songs = props.songs;
 	const ctrlSong = (type) => (() => {
 		if(songs && songs.length){
-			props.dispatch(controlSong(type, songs));
+			console.log(type, songs);
 		}else{console.log('没有歌曲信息');}
 	});
 

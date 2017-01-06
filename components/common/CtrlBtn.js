@@ -3,12 +3,11 @@
  */
 import React from 'react';
 import {connect} from 'react-redux';
-import {controlSong} from '../../action/rank';
 
 function CtrlBtn (props) {
 	console.log('渲染组件 CtrlBtn');
 	const ctrlSong = (type) => (() =>{
-		props.dispatch(controlSong(type, props.song));
+		console.log(type, props.song);
 	});
 
 	return (

@@ -4,19 +4,12 @@ export const RECEIVE_RECOMMEND_TAG = 'RECEIVE_RECOMMEND_TAG';
 export const RECEIVE_RANK_DETAIL = 'RECEIVE_RANK_DETAIL';
 export const RECEIVE_RANK_DATE = 'RECEIVE_RANK_DATE';
 export const RECEIVE_RANK_SONGS = 'RECEIVE_RANK_SONGS';
-// 常量: 用户操作
-export const CHANGE_RANK_TAG = 'CHANGE_RANK_TAG';
-export const CHANGE_RANK_DATE = 'CHANGE_RANK_DATE';
-export const CHANGE_RANK_PAGE = 'CHANGE_RANK_PAGE';
+// 常量:
+export const CLEAR_DATES = 'CLEAR_DATES';
+export const CLEAR_SONGS = 'CLEAR_SONGS';
 export const TOGGLE_DATE_PANEL = 'TOGGLE_DATE_PANEL';
-export const CONTROL_SONG = 'CONTROL_SONG';
-// 常量: 状态
-export const LOADING_SONGS = 'LOADING_SONGS';
+export const RESET_UI = 'RESET_UI';
 /*基本action creator: 信号发射器*/
-export const controlSong = (type, song) => ({
-	type: CONTROL_SONG,
-	data: {type, song}
-});
 export const receiveRecommendTag = (rankTags, rankClass) => ({
 	type: RECEIVE_RECOMMEND_TAG,
 	data: {rankTags, rankClass}
@@ -29,22 +22,23 @@ export const receiveRankDate = (data, parent_rank_id) => ({
 	type: RECEIVE_RANK_DATE,
 	data : {data, parent_rank_id}
 });
-export const receiveRankSongs = (songs, pageSize, rankDateId, totalSongsLen) => ({
+//export const receiveRankSongs = (songs, pageSize, rankDateId, totalSongsLen) => ({
+//	type: RECEIVE_RANK_SONGS,
+//	data: {songs, pageSize, rankDateId, totalSongsLen}
+//});
+export const receiveRankSongs = (data) => ({
 	type: RECEIVE_RANK_SONGS,
-	data: {songs, pageSize, rankDateId, totalSongsLen},
+	data
 });
-export const loadingSongs = () => ({
-	type: LOADING_SONGS
+export const resetUi = (data) => ({
+	type: RESET_UI,
+	data
 });
-export const changeRankTag = () => ({
-	type: CHANGE_RANK_TAG
+export const clearDates = () => ({ // 路由负责参数Rank_id
+	type: CLEAR_DATES
 });
-export const changeRankDate = (rankDateId) => ({
-	type: CHANGE_RANK_DATE,
-	data: {rankDateId}
-});
-export const changeRankPage = () => ({
-	type: CHANGE_RANK_PAGE
+export const clearSongs = () => ({ // 路由负责参数Rank_id
+	type: CLEAR_SONGS
 });
 export const _toggleDatePanel = (boolean) => ({
 	type: TOGGLE_DATE_PANEL,
@@ -151,7 +145,8 @@ export function getAllRecommendTag_toLoadSong (activeTagId, pageIndex){
 export function setCurrentRankTag(rank_id, pageIndex) {
 	return (dispatch) => {
 		// 改变页面显示状态, 高亮所选的, 且页码要回归到指定的.
-		dispatch(changeRankTag());
+		dispatch(clearDates());
+		dispatch(resetUi({rankDateId:rank_id, pageSize:null}));
 		// 获取rank歌曲
 		dispatch(getRankSongs(rank_id, pageIndex || 1));
 		// 获取rank的日期版本
@@ -161,13 +156,12 @@ export function setCurrentRankTag(rank_id, pageIndex) {
 export function setCurrentRankDate(rankDateId) {
 	return (dispatch) => {
 		const pageIndex = 1; // 选择日历Rank默认是回归到第一页
-		dispatch(changeRankDate(rankDateId, pageIndex));
+		dispatch(resetUi({rankDateId, pageSize:null}));
 		dispatch(getRankSongs(rankDateId, pageIndex));
 	}
 }
 export function setCurrentRankPage(rank_id, pageIndex) {
 	return (dispatch) => {
-		dispatch(changeRankPage());
 		dispatch(getRankSongs(rank_id, pageIndex))
 	}
 }
@@ -211,7 +205,8 @@ function getRankDate(rank_id) {
 function getRankSongs(rank_id, pageIndex) {
 	return (dispatch) => {
 		// 先改变页面状态为正在加载歌曲
-		dispatch(loadingSongs());
+		dispatch(resetUi({loadingSongs:true}));
+		dispatch(clearSongs());
 		// 请求数据
 		const params = _rankSongsRequest.defaultParams;
 		params.page = pageIndex;
@@ -219,15 +214,11 @@ function getRankSongs(rank_id, pageIndex) {
 		params.pageSize = 30;
 		return superRequest({
 			url: _rankSongsRequest.URL,
-			data: params,
+			data: params
 		}).then(function (result) {
-			dispatch(receiveRankSongs(
-				result.data,
-				params.pageSize,
-				rank_id,
-				result.total
-			));
-		})
+			dispatch(receiveRankSongs(result));
+			dispatch(resetUi({loadingSongs:false, rankDateId:rank_id}));
+		});
 	}
 }
 

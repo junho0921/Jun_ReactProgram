@@ -94,33 +94,32 @@ const _rankDetailRequest = {
 };
 
 /*获取排行榜标签*/
-const
-	_rankListRequest = {
-		get: ({id, filter, name}) => (
-			superRequest({
-				url: 'http://lib2.service.kugou.com/recommend/data?id=' + id,
-				type: 'get'
-			}).then((result) => {
-				_tagsReducer(result, filter)
-			})
-		),
-		eachClassType: (handler) => (
-			Promise.all(this.list.map(handler))
-		),
-		list:[{
-			name:'HOT_RANK',
-			id: 175,
-			filter: 'type'
-		},{
-			name:'GLOBAL_RANK',
-			id: 298,
-			filter: 'is_show'
-		},{
-			name:'SPECIAL_RANK',
-			id: 299,
-			filter: 'is_show'
-		}]
-	};
+const _rankListRequest = {
+	get: ({id, filter, name}) => (
+		superRequest({
+			url: 'http://lib2.service.kugou.com/recommend/data?id=' + id,
+			type: 'get'
+		}).then((result) => {
+			_tagsReducer(result, filter)
+		})
+	),
+	eachClassType: (handler) => (
+		Promise.all(this.list.map(handler))
+	),
+	list:[{
+		name:'HOT_RANK',
+		id: 175,
+		filter: 'type'
+	},{
+		name:'GLOBAL_RANK',
+		id: 298,
+		filter: 'is_show'
+	},{
+		name:'SPECIAL_RANK',
+		id: 299,
+		filter: 'is_show'
+	}]
+};
 
 /*异步的action creator*/
 /*页面初始化就要获取推荐的rank标签并在获取后要立即请求默认的rank歌曲.*/

@@ -9,10 +9,11 @@ import {
 	RECEIVE_RANK_SONGS,
 
 	TOGGLE_DATE_PANEL,
-	RESET_UI,
+	CHANGE_RANK_DATE_ID,
 
 	CLEAR_DATES,
-	CLEAR_SONGS
+	CLEAR_SONGS,
+	CLEAR_PAGE_INDEX
 } from "../../action/rank";
 
 import {songPrivilege, by} from '../../utils/index';
@@ -105,34 +106,43 @@ export default Rank = (state = initialState, action) => {
 			return Object.assign({...state}, {
 				songs,
 				current: Object.assign({...state.current}, {
-					totalSongsLen : data.total
+					totalSongsLen : data.total,
+					loadingSongs: false
 				})
 			});
 
-		case RESET_UI:
+		case CHANGE_RANK_DATE_ID:
 			return Object.assign({...state}, {
-				current: Object.assign({...state.current}, data)
+				current: Object.assign({...state.current}, {rankDateId: data})
 			});
 
 		/*用户操作系列*/
-		case CLEAR_DATES:
-			return Object.assign({...state}, {
-				dates: [] // 必须清理date数据, 为了卸载日历组件.
-			});
-			break;
-
 		case TOGGLE_DATE_PANEL:
+			let boolean = data;
+			if(boolean === undefined){
+				boolean = !state.current.displayDatePanel;
+			}
 			return Object.assign({...state}, {
-				current: Object.assign({...state.current}, {displayDatePanel: data})
+				current: Object.assign({...state.current}, {displayDatePanel: boolean})
 			});
-
-		case CLEAR_SONGS:
+		case CLEAR_DATES:
+			return Object.assign({...state}, {dates: []});
+		case CLEAR_PAGE_INDEX:
 			return Object.assign({...state}, {
-				songs: [], // 先清空歌曲列表
+				current: Object.assign({...state.current}, {
+					pageSize: null
+				})
+			});
+		case CLEAR_SONGS:
+			return Object.assign({...state}, {songs: []});
+		case ON_LOADING_STATUS:
+			return Object.assign({...state}, {
+				current: Object.assign({...state.current}, {
+					loadingSongs: true
+				})
 			});
 
 		default:
 			return state;
 	}
-	return state;
 }

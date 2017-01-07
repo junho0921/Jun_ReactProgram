@@ -98,7 +98,7 @@ export default connect(
 			) || 0;
 		const
 			pageIndex = props.params.pageIndex || 1,
-			preIndex = (pageIndex - 1) * current.pageSize + 1;
+			preIndex = maxPageIndex ? (pageIndex - 1) * current.pageSize + 1 : 0;
 
 		const result = {
 			// 页码

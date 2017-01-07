@@ -89,7 +89,7 @@ export default Rank = (state = initialState, action) => {
 			return Object.assign({...state}, {
 				dates: dateDate,
 				current: Object.assign({...state.current}, {
-					rankDateId: data.rank_id
+					rankDateId: data.rank_id // todo 这里肯定事没有的, bug
 				})
 			});
 

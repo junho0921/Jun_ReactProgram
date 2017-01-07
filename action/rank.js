@@ -21,11 +21,11 @@ const
 	}),
 	receiveRankDetail = (data) => ({
 		type: RECEIVE_RANK_DETAIL,
-		data : data
+		data
 	}),
-	receiveRankDate = (data, parent_rank_id) => ({
+	receiveRankDate = (data, rank_id) => ({
 		type: RECEIVE_RANK_DATE,
-		data : {data, parent_rank_id}
+		data: {data, rank_id}
 	}),
 	receiveRankSongs = (data) => ({
 		type: RECEIVE_RANK_SONGS,
@@ -47,9 +47,9 @@ const
 	onLoadingStatus = () => ({
 		type: ON_LOADING_STATUS
 	});
-export const toggleDatePanel = (boolean) => ({
+export const toggleDatePanel = (data) => ({
 	type: TOGGLE_DATE_PANEL,
-	data: boolean
+	data
 });
 
 /*===============================*/
@@ -64,7 +64,7 @@ import {_tagsReducer} from '../reducers/Rank/';
 const _rankSongsRequest = {
 	get: (data) => (superRequest({
 		url: 'container/v2/rank_audio',// 获取伴奏接口
-		data: Object.assign({}, this.params, data),
+		data: Object.assign({}, this.params, data)
 	})),
 	params: Object.assign({...config.param}, {
 		show_video: 0,		// 是否显示视频信息 1=是(default) 0=否
@@ -80,7 +80,7 @@ const _rankSongsRequest = {
 const _rankDateRequest = {
 	get: (data) => (superRequest({
 		url: 'v1/rank',
-		data: Object.assign({}, this.params, data),
+		data: Object.assign({}, this.params, data)
 	})),
 	params: Object.assign({...config.param}, {data: [{parent_id: ''}]})
 };
@@ -88,7 +88,7 @@ const _rankDateRequest = {
 const _rankDetailRequest = {
 	get: (data) => (superRequest({
 		url: 'container/v1/rank',
-		data: Object.assign({}, this.params, data),
+		data: Object.assign({}, this.params, data)
 	})),
 	params: Object.assign({...config.param}, {data: {data: []}})
 };
@@ -188,25 +188,25 @@ export function setCurrentRankPage(rank_id, pageIndex) {
 /*获取rankTag的完整信息, 这里主要是获取rankTag的image信息*/
 const
 	getRankTagAllInfo = (idArrays) => (
-		(dispatch) => {
-			return _rankDetailRequest.get({data: idArrays})
-				.then(function (result) {
-					dispatch(receiveRankDetail(result.data));
-				});
-		}
+		(dispatch) => (
+			_rankDetailRequest.get({data: idArrays})
+				.then((result) => (
+					dispatch(receiveRankDetail(result.data))
+				))
+		)
 	),
 	getRankDate = (rank_id) => (
-		(dispatch) => {
-			return _rankDateRequest.get({data: [{parent_id:rank_id}]})
-				.then(function (result) {
-					dispatch(receiveRankDate(result.data, rank_id));
-				})
-		}
+		(dispatch) => (
+			_rankDateRequest.get({data: [{parent_id:rank_id}]})
+				.then((result) => (
+					dispatch(receiveRankDate(result.data, rank_id))
+				))
+		)
 	),
 	getRecommendTag = (classInfo) => (
 		(dispatch) => {
 			const p = _rankListRequest.get(classInfo);
-			p.then(function ({models, sortList}) {
+			p.then(({models, sortList}) => {
 				// 更新store
 				dispatch(receiveRecommendTag(models, {[classInfo.name]: sortList}));
 				// 请求rankTag的完整信息 fork
@@ -222,8 +222,8 @@ const
 			dispatch(clearSongs());
 			// 请求数据
 			return _rankSongsRequest.get({page, rank_id})
-				.then(function (result) {
-					dispatch(receiveRankSongs(result));
-				});
+				.then((result) => (
+					dispatch(receiveRankSongs(result))
+				));
 		}
 	);

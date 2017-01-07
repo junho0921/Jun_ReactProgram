@@ -132,26 +132,26 @@ export function initialContent (activeTagId, pageIndex){
 	return (dispatch) => {
 		// if(activeTagId){
 		// 	return Promise.all([
-		// 		dispatch(setCurrentRankTag(activeTagId, pageIndex)),
-		// 		_rankListRequest.eachClassType((classType) => (
-		// 			dispatch(getRecommendTag(classType))
+		// 		dispatch(changeSongsOfRank(activeTagId, pageIndex)),
+		// 		_rankListRequest.eachClassType((classInfo) => (
+		// 			dispatch(getRecommendTag(classInfo))
 		// 		))
 		// 	]);
 		// }else{
-		// 	return _rankListRequest.eachClassType((classType) => (
-		// 		dispatch(getRecommendTag(classType))
+		// 	return _rankListRequest.eachClassType((classInfo) => (
+		// 		dispatch(getRecommendTag(classInfo))
 		// 			.then(({models, sortList}) => (
-		// 				!activeTagId && classType.name == 'HOT_RANK' && dispatch(setCurrentRankTag(sortList[0]))
+		// 				!activeTagId && classInfo.name == 'HOT_RANK' && dispatch(changeSongsOfRank(sortList[0]))
 		// 			))
 		// 	))
 		// }
-		return _rankListRequest.eachClassType(function (classType) {
-			return dispatch(getRecommendTag(classType))
+		return _rankListRequest.eachClassType(function (classInfo) {
+			return dispatch(getRecommendTag(classInfo))
 				.then(function getDefaultSongs ({models, sortList}) {
 					return activeTagId ? (// 加载指定的rankTag的歌曲,
-						models[activeTagId] && dispatch(setCurrentRankTag(activeTagId, pageIndex))
+						models[activeTagId] && dispatch(changeSongsOfRank(activeTagId, pageIndex))
 					) : (// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
-						classType.name == 'HOT_RANK' && dispatch(setCurrentRankTag(sortList[0]))
+						classInfo.name == 'HOT_RANK' && dispatch(changeSongsOfRank(sortList[0]))
 					)
 				})
 		})
@@ -159,7 +159,7 @@ export function initialContent (activeTagId, pageIndex){
 }
 
 /*用户操作系列*/
-export function setCurrentRankTag(rank_id, pageIndex) {
+export function changeSongsOfRank(rank_id, pageIndex) {
 	return (dispatch) => {
 		// UI方面的调整
 		dispatch(clearDates());
@@ -170,7 +170,7 @@ export function setCurrentRankTag(rank_id, pageIndex) {
 		dispatch(getRankDate(rank_id));
 	}
 }
-export function setCurrentRankDate(rankDateId) {
+export function changeSongsOfDate(rankDateId) {
 	return (dispatch) => {
 		const pageIndex = 1; // 选择日历Rank默认是回归到第一页
 		// UI方面的调整
@@ -179,7 +179,7 @@ export function setCurrentRankDate(rankDateId) {
 		dispatch(getRankSongs(rankDateId, pageIndex));
 	}
 }
-export function setCurrentRankPage(rank_id, pageIndex) {
+export function changeSongsOfPage(rank_id, pageIndex) {
 	return (dispatch) => {
 		dispatch(getRankSongs(rank_id, pageIndex))
 	}

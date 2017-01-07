@@ -14,7 +14,7 @@ import PageIndex from '../common/PageIndex';
 import RankDate from '../common/RankDate/index';
 import { push } from 'react-router-redux';
 
-import {setCurrentRankPage, setCurrentRankDate, toggleDatePanel, initialContent} from '../../action/rank';
+import {changeSongsOfPage, changeSongsOfDate, toggleDatePanel, initialContent} from '../../action/rank';
 
 class Rank extends React.Component {
 	constructor(props){
@@ -25,12 +25,12 @@ class Rank extends React.Component {
 		dispatch(initialContent(props.params.rank_id, props.params.pageIndex));
 
 		this.setPageIndex = (pageIndex) => {
-			dispatch(setCurrentRankPage(_this.props.params.rank_id, pageIndex));
+			dispatch(changeSongsOfPage(_this.props.params.rank_id, pageIndex));
 			dispatch(push('Rank/'+ _this.props.params.rank_id+'/'+ pageIndex));
 		};
 
 		this.onSelectDate = (rank_id) => {
-			dispatch(setCurrentRankDate(rank_id));
+			dispatch(changeSongsOfDate(rank_id));
 			const routesParams = _this.props.params;
 			if(routesParams.pageIndex != 1){
 				dispatch(push('Rank/'+ routesParams.rank_id+'/'+ 1));

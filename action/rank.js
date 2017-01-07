@@ -127,7 +127,7 @@ const _rankListRequest = {
  * 分别加载三个tagList -> 加载Hot tagList的歌曲
  * 指定的tagId -> 加载三个tagList -> 各第一时间检测来加载歌曲
  * */
-export function getAllRecommendTag_toLoadSong (activeTagId, pageIndex){
+export function initialContent (activeTagId, pageIndex){
 	return (dispatch) => (
 		_rankListRequest.eachClassType(function (classType) {
 			const getDefaultSongs = ({rankTags, rankTags_IDArray}) => (

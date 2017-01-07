@@ -19,6 +19,9 @@ import {
 import {songPrivilege, by} from '../../utils/index';
 
 const initialState = {
+	/*
+	 * 路由参数: rank_id, pageIndex
+	 * */
 	rankTags:{
 		// [id]: {
 		// 		rank_name, rank_id, intro, publish_date, update_frequency, icon
@@ -32,17 +35,14 @@ const initialState = {
 	current: {
 		rankDateId: null,	// (object) 日历控件的激活标签Id
 		totalSongsLen: null,
-		pageSize: null,
+		maxPageIndex: 0,
 		loadingSongs: false,
 		displayDatePanel: false // 控制日历控件的展示 可能需要优化
-	},
-	/*
-	* 路由参数有: rank_id, pageIndex
-	* */
+	}
 };
 
 export function _tagsReducer (result, filter) {
-	// 数据处理
+	// 推荐标签返回数据的处理与过滤
 	let renderDatas = [],
 		rankTags = {},
 		idArrays = [],
@@ -102,11 +102,10 @@ export default Rank = (state = initialState, action) => {
 		case RECEIVE_RANK_SONGS:
 			let songs = data.data = data.data || [];
 			songs.forEach(songPrivilege);
-
 			return Object.assign({...state}, {
 				songs,
 				current: Object.assign({...state.current}, {
-					totalSongsLen : data.total,
+					maxPageIndex : +data.total ? Math.ceil(data.total / 30) : 0,
 					loadingSongs: false
 				})
 			});
@@ -130,7 +129,7 @@ export default Rank = (state = initialState, action) => {
 		case CLEAR_PAGE_INDEX:
 			return Object.assign({...state}, {
 				current: Object.assign({...state.current}, {
-					pageSize: null
+					maxPageIndex : 0,
 				})
 			});
 		case CLEAR_SONGS:

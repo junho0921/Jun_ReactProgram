@@ -14,12 +14,15 @@ import PageIndex from '../common/PageIndex';
 import RankDate from '../common/RankDate/index';
 import { push } from 'react-router-redux';
 
-import {setCurrentRankPage, setCurrentRankDate, toggleDatePanel} from '../../action/rank';
+import {setCurrentRankPage, setCurrentRankDate, toggleDatePanel, initialContent} from '../../action/rank';
 
 class Rank extends React.Component {
 	constructor(props){
 		super(props);
 		const _this = this, dispatch = props.dispatch;
+
+		// 初始化页面内容: 请求推荐rankTag与
+		dispatch(initialContent(props.params.rank_id, props.params.pageIndex));
 
 		this.setPageIndex = (pageIndex) => {
 			dispatch(setCurrentRankPage(_this.props.params.rank_id, pageIndex));
@@ -44,7 +47,6 @@ class Rank extends React.Component {
 
 	}
 	render() {
-
 		const props = this.props;
 		console.log('渲染组件 Rank');
 		return (
@@ -53,10 +55,7 @@ class Rank extends React.Component {
 				/*以RankDate的显示状态来选择性绑定事件*/
 				 onClick={props.displayDatePanel && this.hideRankDatePanelIfBlur}>
 				<div className="l hoverScrollBar fl">
-					<RankTags
-						/*使用路由来控制当前加载的排行榜*/
-						initialPageIndex={props.pageIndex}
-						activeTagId={props.params.rank_id}/>
+					<RankTags activeTagId={props.params.rank_id}/>
 				</div>
 				<div className="r contentScrollBar fr"
 					/*以RankDate的显示状态来选择性绑定事件*/
@@ -69,7 +68,6 @@ class Rank extends React.Component {
 							dates={props.dates}
 							/*注意: key是组件重新渲染的重要依据*/
 							key={props.params.rank_id}
-
 							displayDatePanel={props.displayDatePanel}
 							toggleDatePanel={this.toggleDatePanel}
 							currentRankDateId={props.currentRankDateId}/>) || ''}
@@ -91,21 +89,16 @@ class Rank extends React.Component {
 export default connect(
 	(state, props) => {
 		const current = state.Rank.current,
-			currentRankTag = state.Rank.rankTags[props.params.rank_id],
-			currentRankTitle = currentRankTag && currentRankTag.rank_name || '',
-			maxPageIndex = +current.pageSize && +current.totalSongsLen && Math.ceil(
-				current.totalSongsLen / current.pageSize
-			) || 0;
-		const
+			currentRankTag = props.params.rank_id && state.Rank.rankTags[props.params.rank_id],
 			pageIndex = props.params.pageIndex || 1,
-			preIndex = maxPageIndex ? (pageIndex - 1) * current.pageSize + 1 : 0;
+			preIndex = (pageIndex - 1) * 30 + 1;
 
 		const result = {
 			// 页码
-			pageIndex, // 通过路由参数来控制
-			maxPageIndex,
+			pageIndex,
+			maxPageIndex: current.maxPageIndex,
 			// 当前排行榜名称
-			currentRankTitle,
+			currentRankTitle: currentRankTag && currentRankTag.rank_name || '',
 			// 歌曲列表
 			songs: state.Rank.songs,
 			preIndex,
@@ -117,7 +110,7 @@ export default connect(
 			dates : state.Rank.dates,
 			currentRankDateId : current.rankDateId
 		};
-		// console.log('_____rank_props______', result);
-		return result
+		console.log('_____rank_props______', result);
+		return result;
 	}
 )(Rank);

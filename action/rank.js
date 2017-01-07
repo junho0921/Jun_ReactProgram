@@ -12,7 +12,7 @@ export const ON_LOADING_STATUS = 'ON_LOADING_STATUS';
 // 常量: 操作
 export const TOGGLE_DATE_PANEL = 'TOGGLE_DATE_PANEL';
 export const CHANGE_RANK_DATE_ID = 'CHANGE_RANK_DATE_ID';
-/*基本action creator: 信号发射器*/
+/*基本action creator: 信号发射器: 指示reducer处理数据*/
 const
 	receiveRecommendTag = (rankTags, rankClass) => ({
 		type: RECEIVE_RECOMMEND_TAG,
@@ -193,7 +193,7 @@ const getRecommendTag = (classType) => (
 		_rankListRequest.get(classType)
 			.then(function (tags) {
 				// 更新store
-				dispatch(receiveRecommendTag(tags.rankTags, {[classType.name]: tags.rankTags_IDArray}));
+				dispatch(receiveRecommendTag(tags.rankTags, {[classType.name]: tags.rankTags_IDArray})); // todo 优化reducer
 				// 请求rankTag的完整信息 fork
 				dispatch(getRankTagAllInfo(tags.idArrays));
 				return tags;

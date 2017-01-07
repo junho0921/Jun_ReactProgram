@@ -44,9 +44,8 @@ const initialState = {
 export function _tagsReducer (result, filter) {
 	// 推荐标签返回数据的处理与过滤
 	let renderDatas = [],
-		rankTags = {},
-		idArrays = [],
-		rankTags_IDArray;
+		models = {},
+		sortList;
 
 	Object.keys(result.data).forEach(function (key) {
 		const value = result.data[key];
@@ -54,8 +53,7 @@ export function _tagsReducer (result, filter) {
 		if(+value[filter]){
 			value.sort = +value.sort;
 			const rank_id = value.cid;
-			idArrays.push({rank_id});
-			rankTags[rank_id] = {
+			models[rank_id] = {
 				rank_name: value.rankname,
 				rank_id: rank_id
 			};
@@ -63,12 +61,8 @@ export function _tagsReducer (result, filter) {
 		}
 	});
 	renderDatas.sort(by('sort'));
-	rankTags_IDArray = renderDatas.map((item) => (item.cid));
-	return {
-		rankTags,
-		idArrays,
-		rankTags_IDArray
-	};
+	sortList = renderDatas.map((item) => (item.cid));
+	return {models, sortList,};
 }
 
 export default Rank = (state = initialState, action) => {

@@ -12,6 +12,7 @@ export const ON_LOADING_STATUS = 'ON_LOADING_STATUS';
 // 常量: 操作
 export const TOGGLE_DATE_PANEL = 'TOGGLE_DATE_PANEL';
 export const CHANGE_RANK_DATE_ID = 'CHANGE_RANK_DATE_ID';
+
 /*基本action creator: 信号发射器: 指示reducer处理数据*/
 const
 	receiveRecommendTag = (rankTags, rankClass) => ({
@@ -98,9 +99,9 @@ const _rankListRequest = {
 		superRequest({
 			url: 'http://lib2.service.kugou.com/recommend/data?id=' + id,
 			type: 'get'
-		}).then((result) => {
-			_tagsReducer(result, filter)
-		})
+		}).then(
+			(result) => (_tagsReducer(result, filter))
+		)
 	),
 	eachClassType: (handler) => (
 		Promise.all(this.list.map(handler))
@@ -128,18 +129,33 @@ const _rankListRequest = {
  * 指定的tagId -> 加载三个tagList -> 各第一时间检测来加载歌曲
  * */
 export function initialContent (activeTagId, pageIndex){
-	return (dispatch) => (
-		_rankListRequest.eachClassType(function (classType) {
-			const getDefaultSongs = ({rankTags, rankTags_IDArray}) => (
-				activeTagId ? (// 加载指定的rankTag的歌曲,
-					rankTags[activeTagId] && dispatch(setCurrentRankTag(activeTagId, pageIndex))
-				):(// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
-					typeName == 'HOT_RANK' && dispatch(setCurrentRankTag(rankTags[rankTags_IDArray[0]].rank_id, pageIndex))
-				)
-			);
-			return dispatch(getRecommendTag(classType)).then(getDefaultSongs)
+	return (dispatch) => {
+		// if(activeTagId){
+		// 	return Promise.all([
+		// 		dispatch(setCurrentRankTag(activeTagId, pageIndex)),
+		// 		_rankListRequest.eachClassType((classType) => (
+		// 			dispatch(getRecommendTag(classType))
+		// 		))
+		// 	]);
+		// }else{
+		// 	return _rankListRequest.eachClassType((classType) => (
+		// 		dispatch(getRecommendTag(classType))
+		// 			.then(({models, sortList}) => (
+		// 				!activeTagId && classType.name == 'HOT_RANK' && dispatch(setCurrentRankTag(sortList[0]))
+		// 			))
+		// 	))
+		// }
+		return _rankListRequest.eachClassType(function (classType) {
+			return dispatch(getRecommendTag(classType))
+				.then(function getDefaultSongs ({models, sortList}) {
+					return activeTagId ? (// 加载指定的rankTag的歌曲,
+						models[activeTagId] && dispatch(setCurrentRankTag(activeTagId, pageIndex))
+					) : (// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
+						classType.name == 'HOT_RANK' && dispatch(setCurrentRankTag(sortList[0]))
+					)
+				})
 		})
-	)
+	}
 }
 
 /*用户操作系列*/
@@ -170,46 +186,44 @@ export function setCurrentRankPage(rank_id, pageIndex) {
 }
 /*内部的异步action*/
 /*获取rankTag的完整信息, 这里主要是获取rankTag的image信息*/
-function getRankTagAllInfo (idArrays) {
-	return (dispatch) => {
-		return _rankDetailRequest.get({data: idArrays})
-			.then(function (result) {
-				dispatch(receiveRankDetail(result.data));
-			});
-	}
-}
-
-function getRankDate(rank_id) {
-	return (dispatch) => {
-		return _rankDateRequest.get({data: [{parent_id:rank_id}]})
-			.then(function (result) {
-				dispatch(receiveRankDate(result.data, rank_id));
-			})
-	}
-}
-
-const getRecommendTag = (classType) => (
-	(dispatch) => (
-		_rankListRequest.get(classType)
-			.then(function (tags) {
+const
+	getRankTagAllInfo = (idArrays) => (
+		(dispatch) => {
+			return _rankDetailRequest.get({data: idArrays})
+				.then(function (result) {
+					dispatch(receiveRankDetail(result.data));
+				});
+		}
+	),
+	getRankDate = (rank_id) => (
+		(dispatch) => {
+			return _rankDateRequest.get({data: [{parent_id:rank_id}]})
+				.then(function (result) {
+					dispatch(receiveRankDate(result.data, rank_id));
+				})
+		}
+	),
+	getRecommendTag = (classInfo) => (
+		(dispatch) => {
+			const p = _rankListRequest.get(classInfo);
+			p.then(function ({models, sortList}) {
 				// 更新store
-				dispatch(receiveRecommendTag(tags.rankTags, {[classType.name]: tags.rankTags_IDArray})); // todo 优化reducer
+				dispatch(receiveRecommendTag(models, {[classInfo.name]: sortList}));
 				// 请求rankTag的完整信息 fork
-				dispatch(getRankTagAllInfo(tags.idArrays));
-				return tags;
-			})
-	)
-);
-
-function getRankSongs(rank_id, page) {
-	return (dispatch) => {
-		// UI方面的调整
-		dispatch(onLoadingStatus());
-		dispatch(clearSongs());
-		// 请求数据
-		return _rankSongsRequest.get({page, rank_id})
-			.then(function (result) {
-				dispatch(receiveRankSongs(result));
+				dispatch(getRankTagAllInfo(sortList.map((id) => ({rank_id: id}))));
 			});
-	}
-}
+			return p;
+		}
+	),
+	getRankSongs = (rank_id, page) => (
+		(dispatch) => {
+			// UI方面的调整
+			dispatch(onLoadingStatus());
+			dispatch(clearSongs());
+			// 请求数据
+			return _rankSongsRequest.get({page, rank_id})
+				.then(function (result) {
+					dispatch(receiveRankSongs(result));
+				});
+		}
+	);

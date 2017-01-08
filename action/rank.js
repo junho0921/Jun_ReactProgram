@@ -64,7 +64,7 @@ import {_tagsReducer} from '../reducers/Rank/';
 const _rankSongsRequest = {
 	get: (data) => (superRequest({
 		url: 'container/v2/rank_audio',// 获取伴奏接口
-		data: Object.assign({}, this.params, data)
+		data: Object.assign({}, _rankSongsRequest.params, data)
 	})),
 	params: Object.assign({...config.param}, {
 		show_video: 0,		// 是否显示视频信息 1=是(default) 0=否
@@ -80,7 +80,7 @@ const _rankSongsRequest = {
 const _rankDateRequest = {
 	get: (data) => (superRequest({
 		url: 'v1/rank',
-		data: Object.assign({}, this.params, data)
+		data: Object.assign({}, _rankDateRequest.params, data)
 	})),
 	params: Object.assign({...config.param}, {data: [{parent_id: ''}]})
 };
@@ -88,7 +88,7 @@ const _rankDateRequest = {
 const _rankDetailRequest = {
 	get: (data) => (superRequest({
 		url: 'container/v1/rank',
-		data: Object.assign({}, this.params, data)
+		data: Object.assign({}, _rankDetailRequest.params, data)
 	})),
 	params: Object.assign({...config.param}, {data: {data: []}})
 };
@@ -104,7 +104,7 @@ const _rankListRequest = {
 		)
 	),
 	eachClassType: (handler) => (
-		Promise.all(this.list.map(handler))
+		Promise.all(_rankListRequest.list.map(handler))
 	),
 	list:[{
 		name:'HOT_RANK',
@@ -145,13 +145,13 @@ export function initialContent (activeTagId, pageIndex){
 		// 			))
 		// 	))
 		// }
-		return _rankListRequest.eachClassType(function (classInfo) {
+		return _rankListRequest.eachClassType((classInfo) => {
 			return dispatch(getRecommendTag(classInfo))
-				.then(function getDefaultSongs ({models, sortList}) {
+				.then(function getDefaultSongs({models, sortList}) {
 					return activeTagId ? (// 加载指定的rankTag的歌曲,
 						models[activeTagId] && dispatch(changeSongsOfRank(activeTagId, pageIndex))
 					) : (// 但没有指定rankTag的话, 默认选择HOT_RANK的第一个rankTag
-						classInfo.name == 'HOT_RANK' && dispatch(changeSongsOfRank(sortList[0]))
+						classInfo.name == 'HOT_RANK' && dispatch(changeSongsOfRank(sortList[0])).then(()=>(sortList[0]))
 					)
 				})
 		})
@@ -164,10 +164,10 @@ export function changeSongsOfRank(rank_id, pageIndex) {
 		// UI方面的调整
 		dispatch(clearDates());
 		dispatch(clearPageIndex());
-		// 获取rank歌曲
-		dispatch(getRankSongs(rank_id, pageIndex || 1));
 		// 获取rank的日期版本
 		dispatch(getRankDate(rank_id));
+		// 获取rank歌曲
+		return dispatch(getRankSongs(rank_id, pageIndex || 1));
 	}
 }
 export function changeSongsOfDate(rankDateId) {

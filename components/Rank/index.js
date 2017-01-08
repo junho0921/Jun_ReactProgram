@@ -22,7 +22,10 @@ class Rank extends React.Component {
 		const _this = this, dispatch = props.dispatch;
 
 		// 初始化页面内容: 请求推荐rankTag与
-		dispatch(initialContent(props.params.rank_id, props.params.pageIndex));
+		dispatch(initialContent(props.params.rank_id, props.params.pageIndex))
+			.then((data) => ( // 修改路由参数
+				!props.params.rank_id && dispatch(push('Rank/'+ data[0] +'/'+ 1))
+			));
 
 		this.setPageIndex = (pageIndex) => {
 			dispatch(changeSongsOfPage(_this.props.params.rank_id, pageIndex));

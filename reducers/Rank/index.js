@@ -13,6 +13,7 @@ import {
 
 	CLEAR_DATES,
 	CLEAR_SONGS,
+	ON_LOADING_STATUS,
 	CLEAR_PAGE_INDEX
 } from "../../action/rank";
 
@@ -62,10 +63,10 @@ export function _tagsReducer (result, filter) {
 	});
 	renderDatas.sort(by('sort'));
 	sortList = renderDatas.map((item) => (item.cid));
-	return {models, sortList,};
+	return {models, sortList};
 }
 
-export default Rank = (state = initialState, action) => {
+export default (state = initialState, action) => {
 	const data = action.data;
 
 	switch (action.type){
@@ -123,7 +124,7 @@ export default Rank = (state = initialState, action) => {
 		case CLEAR_PAGE_INDEX:
 			return Object.assign({...state}, {
 				current: Object.assign({...state.current}, {
-					maxPageIndex : 0,
+					maxPageIndex : 0
 				})
 			});
 		case CLEAR_SONGS:

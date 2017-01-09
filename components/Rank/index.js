@@ -14,7 +14,8 @@ import PageIndex from '../common/PageIndex';
 import RankDate from '../common/RankDate/index';
 import { push } from 'react-router-redux';
 
-import {changeSongsOfPage, changeSongsOfDate, toggleDatePanel, initialContent} from '../../action/rank';
+import {toggleDatePanel} from '../../action/rank';
+import {changeSongsOfPage, changeSongsOfDate, initialContent} from '../../action/rank_sideAction';
 
 class Rank extends React.Component {
 	constructor(props){
@@ -24,19 +25,19 @@ class Rank extends React.Component {
 		// 初始化页面内容: 请求推荐rankTag与songs
 		dispatch(initialContent(props.params.rank_id, props.params.pageIndex))
 			.then((data) => ( // 修改路由参数
-				!props.params.rank_id && dispatch(push('Rank/${data[0]}/1'))
+				!props.params.rank_id && dispatch(push('Rank/'+data[0]+'/1'))
 			));
 
 		this.setPageIndex = (pageIndex) => {
 			dispatch(changeSongsOfPage(_this.props.params.rank_id, pageIndex));
-			dispatch(push('Rank/${_this.props.params.rank_id}/${pageIndex}'));
+			dispatch(push('Rank/'+_this.props.params.rank_id+'/'+pageIndex));
 		};
 
 		this.onSelectDate = (rank_id) => {
 			dispatch(changeSongsOfDate(rank_id));
 			const routesParams = _this.props.params;
 			if(routesParams.pageIndex != 1){
-				dispatch(push('Rank/${routesParams.rank_id}/1'));
+				dispatch(push('Rank/'+routesParams.rank_id+'/1'));
 			}
 		};
 

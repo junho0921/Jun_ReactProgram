@@ -1,5 +1,5 @@
 'use strict';
-import {config} from './Global';
+import {config} from '../utils/Global';
 import {superRequest} from '../utils/index';
 
 /*请求歌手的接口*/

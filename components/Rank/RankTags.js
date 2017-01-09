@@ -3,7 +3,7 @@
  */
 import React from 'react';
 /*action*/
-import {changeSongsOfRank} from '../../action/rank';
+import {changeSongsOfRank} from '../../action/rank_sideAction';
 import {connect} from 'react-redux';
 import { push } from 'react-router-redux';
 
@@ -27,7 +27,7 @@ class RankTagList extends React.Component {
 		// 在本tagList加载完毕后, 执行action
 		this.onSelectTag = (rank_id) => {
 			dispatch(changeSongsOfRank(rank_id));
-			dispatch(push('Rank/${rank_id}/1'));
+			dispatch(push('Rank/'+rank_id+ '/1'));
 		};
 	}
 	shouldComponentUpdate(newProps){

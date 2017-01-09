@@ -1,7 +1,7 @@
 /**
  * Created by jiajunhe on 2016/9/21.
  */
-import {config} from '../action/Global'
+import {config} from './Global'
 const contentTypeObj = {
 	1: "application/x-www-form-urlencoded",
 	2: "application/json;charset=utf-8",
@@ -138,7 +138,7 @@ export function superOperateSong (type, songData, songlistname) {
 		item.bitrate_320 = item.bitrate_320 || 320;
 		// 部分接口的filename没有提供, 那就使用author_name与audio_name拼起来的字符串
 		item.filename = item.filename || item.author_name+ ' - ' + item.audio_name;
-		const format = '.${item.extname}', fixWord = ' - 伴奏';
+		const format = '.'+item.extname, fixWord = ' - 伴奏';
 		// 伴奏页面的歌曲都需要添加"伴奏"的后缀
 		if(window.location.hash == '#accompany' && !item.filename.match(fixWord)){item.filename += fixWord}
 		// filename必须是歌手名称+歌曲名称+歌曲格式后缀

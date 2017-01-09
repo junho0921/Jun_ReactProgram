@@ -64,7 +64,7 @@ function PageIndex (props) {
 			<span
 				key={i}
 				className={i == props.pageIndex && 'active'}
-				title={'第${i}页'}
+				title={'第'+i+'页'}
 				onClick={props.onClick.bind({}, i)}>
 				{i}
 			</span>

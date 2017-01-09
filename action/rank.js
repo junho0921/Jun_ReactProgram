@@ -97,7 +97,7 @@ const _rankDetailRequest = {
 const _rankListRequest = {
 	get: ({id, filter, name}) => (
 		superRequest({
-			url: 'http://lib2.service.kugou.com/recommend/data?id=' + id,
+			url: 'http://lib2.service.kugou.com/recommend/data?id=${id}',
 			type: 'get'
 		}).then(
 			(result) => (_tagsReducer(result, filter))

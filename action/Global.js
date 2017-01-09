@@ -5,7 +5,7 @@
 export const config = {
 	url: 'http://kmr.service.kugou.com/',    // 请求路径
 	singerDefaultImg: 'http://s3.fx.kgimg.com/fxstatic/images/accompany/default.png',
-	singerImgUrl: 'http://singerimg.kugou.com/uploadpic/softhead/' + 100 + '/',
+	singerImgUrl: 'http://singerimg.kugou.com/uploadpic/softhead/100/',
 	param: {
 		appid: 1000,
 		clientver: 7540,

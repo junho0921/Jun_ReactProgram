@@ -189,9 +189,7 @@ class DatePanel extends React.Component {
 			left: listInfo.currentIndex == 1 && 'disable',
 			right: listInfo.currentIndex == maxPageIndex && 'disable'
 		};
-		const listPos =
-			{transform: 'translate3D(-' +
-			(listInfo.currentIndex - 1 ) * config.pageWith + 'px, 0, 0)'};
+		const listPos = {transform: 'translate3D(-${(listInfo.currentIndex - 1 ) * config.pageWith}px, 0, 0)'};
 
 		return {
 			recentDateTips,

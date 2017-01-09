@@ -3,7 +3,7 @@
  */
 import React from 'react';
 /*action*/
-import {changeSongsOfRank} from '../../action/rank_sideAction';
+import {changeSongsOfRank} from '../../action/rank';
 import {connect} from 'react-redux';
 import { push } from 'react-router-redux';
 

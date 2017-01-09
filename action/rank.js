@@ -57,19 +57,19 @@ export const
 	CHANG_SONGS_RANK = 'CHANG_SONGS_RANK',
 	CHANG_SONGS_DATE = 'CHANG_SONGS_DATE',
 	CHANG_SONGS_PAGE = 'CHANG_SONGS_PAGE',
-	initialContent = (activeTagId, pageIndex) => ({
-		type: CHANG_SONGS_RANK,
-		data: activeTagId, pageIndex
+	initialContent = (activeTagId, pageIndex, callback) => ({
+		type: INITIAL_CONTENT,
+		activeTagId, pageIndex, callback
 	}),
 	changeSongsOfRank = (rank_id, pageIndex) => ({
-		type: INITIAL_CONTENT,
-		data: rank_id, pageIndex
+		type: CHANG_SONGS_RANK,
+		rank_id, pageIndex
 	}),
 	changeSongsOfDate = (rankDateId) => ({
 		type: CHANG_SONGS_DATE,
-		data: rankDateId
+		rankDateId
 	}),
 	changeSongsOfPage = (rank_id, pageIndex) => ({
 		type: CHANG_SONGS_PAGE,
-		data: rank_id, pageIndex
+		rank_id, pageIndex
 	});

@@ -1,22 +1,6 @@
 'use strict';
-import {config} from '../utils/Global';
+import {_singerRequest} from '../utils/requestApi';
 import {superRequest} from '../utils/index';
-
-/*请求歌手的接口*/
-let _singerRequest = {
-	URL: 'container/v1/author/lang',
-	data: Object.assign({...config.param}, {
-		initial: '', 		// 字母
-		lang_ids: '', 		// 语种
-		//lang_logic:'',	// 语种逻辑
-		sort: 1, 			// 排序类型
-		//is_musician: '',	// 歌手类型, 合作歌手/伴奏歌手
-		//filter_ids:'', 	// 过滤的歌手
-		sex_type: '',		// 歌手类型, 女歌手, 男歌手, 组合
-		page: 1,			// 分页
-		pagesize: 60		// 每页的数据量
-	})
-};
 
 // 常量: 服务器返回信息
 export const RECEIVE_SINGERS = 'RECEIVE_SINGERS';

@@ -1,7 +1,7 @@
 /**
  * Created by jiajunhe on 2016/9/21.
  */
-import {config} from './Global'
+import {config} from './requestApi'
 const contentTypeObj = {
 	1: "application/x-www-form-urlencoded",
 	2: "application/json;charset=utf-8",

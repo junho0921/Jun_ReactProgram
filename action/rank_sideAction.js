@@ -35,17 +35,6 @@ export function initialContent (activeTagId, pageIndex){
 		// 			))
 		// 	))
 		// }
-		console.log({
-			receiveRecommendTag,
-			receiveRankDetail,
-			receiveRankDate,
-			receiveRankSongs,
-			changeRankDateId,
-			clearDates,
-			clearSongs,
-			clearPageIndex,
-			onLoadingStatus
-		});
 		return _rankListRequest.eachClassType((classInfo) => {
 			return dispatch(getRecommendTag(classInfo))
 				.then(function getDefaultSongs({models, sortList}) {

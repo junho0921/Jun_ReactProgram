@@ -3,11 +3,8 @@
  */
 import React from 'react';
 /*action*/
-import {changeSongsOfRank} from '../../action/rank';
 import {connect} from 'react-redux';
-import { push } from 'react-router-redux';
-
-const RankClassList = ['HOT_RANK', 'GLOBAL_RANK', 'SPECIAL_RANK'];
+import {_rankListRequest} from '../../utils/requestApi';
 
 /*只关注文本内容或icon, 提供触发父级的onclick*/
 const Tag = (props) => (
@@ -23,12 +20,6 @@ const Tag = (props) => (
 class RankTagList extends React.Component {
 	constructor(props){
 		super(props);
-		const dispatch = this.props.dispatch;
-		// 在本tagList加载完毕后, 执行action
-		this.onSelectTag = (rank_id) => {
-			dispatch(changeSongsOfRank(rank_id));
-			dispatch(push('Rank/'+rank_id+ '/1'));
-		};
 	}
 	shouldComponentUpdate(newProps){
 		const pastProps = this.props;
@@ -38,25 +29,23 @@ class RankTagList extends React.Component {
 	}
 	render() {
 		console.log('渲染组件 RankTag');
-		const _this = this, props = this.props;
-		const allRankClass = props.rankClass;
-		const allRankTags = props.rankTags;
-		const isActiveTag = (rank_id) => (rank_id == props.activeTagId);
+		const props = this.props,
+			isActiveTag = (rank_id) => (rank_id == props.activeTagId);
 		return (
 			<div className="side">
-				{RankClassList.map(function (rankClass) {
-					const rankTagList = allRankClass[rankClass];
+				{_rankListRequest.list.map(function ({name}) {
+					const rankTagList = props.rankClass[name];
 					return rankTagList && rankTagList.length && (
-						<ul className="rank_nav" key={rankClass}>
+						<ul className="rank_nav" key={name}>
 							{rankTagList.map(function (rankId) {
-								const tagData = allRankTags[rankId];
+								const tagData = props.rankTags[rankId];
 								return tagData && (
 									<Tag
 										tagName = 		{tagData.rank_name}
 										icon = 			{tagData.icon}
 										className = 	{isActiveTag(tagData.rank_id)&&'active'}
 										key = 			{tagData.rank_id}
-										onSelectTag = 	{!isActiveTag(tagData.rank_id)&&_this.onSelectTag.bind(_this, tagData.rank_id)} />
+										onSelectTag = 	{!isActiveTag(tagData.rank_id)&&props.onSelectTag.bind({}, tagData.rank_id)} />
 									)
 							})}
 						</ul>)

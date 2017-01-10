@@ -15,6 +15,7 @@ import {
 	_rankDetailRequest,
 	_rankListRequest
 } from '../utils/requestApi';
+import { push } from 'react-router-redux';
 
 /*异步的action creator*/
 /*页面初始化就要获取推荐的rank标签并在获取后要立即请求默认的rank歌曲.*/
@@ -56,6 +57,8 @@ export function changeSongsOfRank(rank_id, pageIndex) {
 		dispatch(clearPageIndex());
 		// 获取rank的日期版本
 		dispatch(getRankDate(rank_id));
+		// 路由
+		dispatch(push('Rank/'+rank_id+ '/' + (pageIndex || 1)));
 		// 获取rank歌曲
 		return dispatch(getRankSongs(rank_id, pageIndex || 1));
 	}
@@ -71,7 +74,8 @@ export function changeSongsOfDate(rankDateId) {
 }
 export function changeSongsOfPage(rank_id, pageIndex) {
 	return (dispatch) => {
-		dispatch(getRankSongs(rank_id, pageIndex))
+		dispatch(getRankSongs(rank_id, pageIndex));
+		dispatch(push('Rank/'+rank_id+'/'+pageIndex));
 	}
 }
 /*内部的异步action*/

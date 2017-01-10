@@ -6,16 +6,21 @@
 import React from 'react';
 import './main.css';
 import {connect} from 'react-redux';
+import { push } from 'react-router-redux';
 
 import RankTags from './RankTags';
 import AllCtrlBtn from '../common/AllCtrlBtn';
 import SongList from '../common/SongList';
 import PageIndex from '../common/PageIndex';
 import RankDate from '../common/RankDate/index';
-import { push } from 'react-router-redux';
 
 import {toggleDatePanel} from '../../action/rank';
-import {changeSongsOfPage, changeSongsOfDate, initialContent} from '../../action/rank';
+import * as signalAction from '../../action/rank';
+import * as thunkAction from '../../action/rank_sideAction';
+
+console.error('actionMode = ', window.actionMode);
+const {changeSongsOfPage, changeSongsOfDate, initialContent, changeSongsOfRank} =
+	(window.actionMode == 'sagaMode'? signalAction: thunkAction);
 
 class Rank extends React.Component {
 	constructor(props){
@@ -23,23 +28,20 @@ class Rank extends React.Component {
 		const _this = this, dispatch = props.dispatch;
 
 		// 初始化页面内容: 请求推荐rankTag与songs
-		dispatch(initialContent(props.params.rank_id, props.params.pageIndex, (data) => (
-			// 修改路由参数
-			!props.params.rank_id && dispatch(push('Rank/'+data[0]+'/1'))
-		)));
+		dispatch(initialContent(props.params.rank_id, props.params.pageIndex));
 
-		this.setPageIndex = (pageIndex) => {
-			dispatch(changeSongsOfPage(_this.props.params.rank_id, pageIndex));
-			dispatch(push('Rank/'+_this.props.params.rank_id+'/'+pageIndex));
-		};
-
+		this.setPageIndex = (pageIndex) => (
+			dispatch(changeSongsOfPage(_this.props.params.rank_id, pageIndex))
+		);
 		this.onSelectDate = (rank_id) => {
 			dispatch(changeSongsOfDate(rank_id));
-			const routesParams = _this.props.params;
-			if(routesParams.pageIndex != 1){
-				dispatch(push('Rank/'+routesParams.rank_id+'/1'));
+			if(_this.props.params.pageIndex != 1){ // 特殊的路由处理
+				dispatch(push('Rank/'+_this.props.params.rank_id+'/1'));
 			}
 		};
+		this.onSelectTag = (rank_id) => (
+			dispatch(changeSongsOfRank(rank_id))
+		);
 
 		this.hideRankDatePanelIfBlur = (e) => {
 			if(e.target && !_this.refs.RankDate.contains(e.target)){ _this.hideDatePanel(); }
@@ -59,7 +61,7 @@ class Rank extends React.Component {
 				/*以RankDate的显示状态来选择性绑定事件*/
 				 onClick={props.displayDatePanel && this.hideRankDatePanelIfBlur}>
 				<div className="l hoverScrollBar fl">
-					<RankTags activeTagId={props.params.rank_id}/>
+					<RankTags activeTagId={props.params.rank_id} onSelectTag={this.onSelectTag}/>
 				</div>
 				<div className="r contentScrollBar fr"
 					/*以RankDate的显示状态来选择性绑定事件*/
